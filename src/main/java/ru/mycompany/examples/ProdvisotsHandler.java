@@ -43,8 +43,8 @@ public class ProdvisotsHandler {
 //  private final BufferedImage[] roundLinc;
 //  private final BufferedImage[] id;
 //  private final BufferedImage[] to_visit;
-  private final BufferedImage[] closeActivePage;
-  private final BufferedImage[] closePassivePage;
+//  private final BufferedImage[] closeActivePage;
+//  private final BufferedImage[] closePassivePage;
 //  private final BufferedImage[] completed;
 
   public ProdvisotsHandler(WebDriver webDriver, User user) throws AWTException {
@@ -68,8 +68,8 @@ public class ProdvisotsHandler {
 //    this.roundLinc = init(directory1, "round_linc");
 //    this.id = init(directory1, "id");
 //    this.to_visit = init(directory1, "to_visit");
-    this.closeActivePage = init(directory1, "actclose");
-    this.closePassivePage = init(directory1, "pasclose");
+//    this.closeActivePage = init(directory1, "actclose");
+//    this.closePassivePage = init(directory1, "pasclose");
 //    this.completed = init(directory1, "completed");
   }
 
