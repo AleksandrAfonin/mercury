@@ -6,6 +6,7 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.interactions.Actions;
 
 import javax.imageio.ImageIO;
+import javax.xml.crypto.Data;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.*;
@@ -13,6 +14,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Date;
 import java.util.List;
 
 public class ProdvisotsHandler {
@@ -22,7 +24,6 @@ public class ProdvisotsHandler {
   private final Actions ACTIONS;
   private final String URL;
   private final Processing processing;
-  private final Rectangle header;
   private final String SURFING_SITES = "//*/div[@id='mnu_tblock1']/a[text()[contains(.,'Сёрфинг сайтов')]]";
   private final String AUTHORISATION = "//*/div[@class='titles']";// Контроль страницы авторизации
   private final String WELL_COME = "//*/span[@id='mnu_title1']";// Контроль рабочей страницы
@@ -53,7 +54,6 @@ public class ProdvisotsHandler {
     this.E_MAIL = user.getLogin();
     this.PASSWORD = user.getPassword();
     this.ACTIONS = new Actions(webDriver, Duration.ofSeconds(1));
-    this.header = new Rectangle(270, 2, 900, 30);
     this.URL = "https://prodvisots.ru/login";
 
     File directory1 = new File(new File(".", "sprites"), "prodvisots");
@@ -64,13 +64,8 @@ public class ProdvisotsHandler {
       directory1 = new File(directory1, "edge");
     }
     this.ravno = init(directory1, "ravno");
-//    this.visits = init(directory1, "visits");
-//    this.roundLinc = init(directory1, "round_linc");
-//    this.id = init(directory1, "id");
-//    this.to_visit = init(directory1, "to_visit");
     this.closeActivePage = init(directory1, "actclose");
     this.closePassivePage = init(directory1, "pasclose");
-//    this.completed = init(directory1, "completed");
   }
 
   private BufferedImage[] init(File file, String folder) {
@@ -88,8 +83,8 @@ public class ProdvisotsHandler {
   }
 
   public void run() throws WebDriverException {
-
-    System.out.println("Account: " + E_MAIL);
+    Date date = new Date(System.currentTimeMillis());
+    System.out.println(date + "   Account: " + E_MAIL);
 
     if (!start()) {
       WEB_DRIVER.quit();
@@ -110,17 +105,6 @@ public class ProdvisotsHandler {
       WEB_DRIVER.quit();
       return;
     }
-////=============================
-//    if (!goToPaidTransitions()) {
-//      WEB_DRIVER.quit();
-//      return;
-//    }
-//
-//    if (!goToPaidSurfing()) {
-//      WEB_DRIVER.quit();
-//      return;
-//    }
-////=============================
 
 //    if (!goToYouTube()) {
 //      WEB_DRIVER.quit();
@@ -233,7 +217,7 @@ public class ProdvisotsHandler {
         }catch (Exception e){
           continue;
         }
-        if (processing.isMore1TabsWithCount(5)){
+        if (processing.isMore1TabsWithCount(30)){
           Object[] windowsHandles = WEB_DRIVER.getWindowHandles().toArray();
           WEB_DRIVER.switchTo().window((String) windowsHandles[1]);
           confirm();
@@ -248,7 +232,7 @@ public class ProdvisotsHandler {
   }
 
   private boolean confirm(){
-    WebElement webElement = processing.getElementByXpathWithCount(GET_FRAME, 10);
+    WebElement webElement = processing.getElementByXpathWithCount(GET_FRAME, 30);
     if (webElement == null){
       return false;
     }
@@ -286,9 +270,6 @@ public class ProdvisotsHandler {
       }
       processing.scrollPageDown(300);
       for (WebElement element : dataElements){
-//        if (element.getAttribute("target").equals("_blank")){
-//          continue;
-//        }
         ACTIONS.click(element).perform();
         pause(4000);
         if (processing.isMore1TabsWithCount(5)){
@@ -361,7 +342,6 @@ public class ProdvisotsHandler {
   private boolean resolveCaptcha() {
     Point point = processing.find(ravno, true, 5);
     if (point == null) {
-      WEB_DRIVER.quit();
       return false;
     }
     WebElement webElement = processing.getElementByXpathWithCount(INPUT_CODE, 15);
