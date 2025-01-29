@@ -4,6 +4,7 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 
 import java.time.Duration;
+import java.util.Date;
 
 public class SocPublicHandler {
   private final WebDriver WEB_DRIVER;
@@ -21,8 +22,8 @@ public class SocPublicHandler {
   }
 
   public void run() throws WebDriverException {
-
-    System.out.println("Account: " + E_MAIL);
+    Date date = new Date(System.currentTimeMillis());
+    System.out.println(date + "   Account: " + E_MAIL);
 
     if (!start()) {
       WEB_DRIVER.quit();

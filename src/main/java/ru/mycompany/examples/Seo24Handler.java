@@ -128,7 +128,7 @@ public class Seo24Handler {
       return false;
     }
     clickInteractable(webElement, 20);
-    pause(3000);
+    pause(5000);
     return true;
   }
 

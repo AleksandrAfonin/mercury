@@ -14,6 +14,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +64,8 @@ public class WMRFastHandler {
   }
 
   public void run() throws WebDriverException {
+    Date date = new Date(System.currentTimeMillis());
+    System.out.println(date + "   Account: " + LOGIN);
 
     if (!start()) {
       WEB_DRIVER.quit();

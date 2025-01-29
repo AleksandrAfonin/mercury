@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Date;
 import java.util.List;
 
 public class SarSeoHandler {
@@ -75,8 +76,8 @@ public class SarSeoHandler {
   }
 
   public void run() throws WebDriverException {
-
-    System.out.println("Account: " + E_MAIL);
+    Date date = new Date(System.currentTimeMillis());
+    System.out.println(date + "   Account: " + E_MAIL);
 
     if (!start()) {
       WEB_DRIVER.quit();

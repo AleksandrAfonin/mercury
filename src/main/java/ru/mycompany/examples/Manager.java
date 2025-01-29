@@ -100,6 +100,48 @@ public class Manager {
           }
         }
 
+        for (User user : accountsSeo24) {
+          long currentTime = System.currentTimeMillis();
+          long nextTime = user.getNextTime();
+          if (currentTime < nextTime){
+            continue;
+          }
+          EdgeDriver webDriver = new EdgeDriver(edgeOptions);// Получаем драйвер
+          webDriver.manage().window().maximize();// Устанавливаем размеры окна браузера
+          try{
+            new Seo24Handler(webDriver, user).run();// Handler
+            setNextTime(user);
+          }catch (Exception e){
+            e.printStackTrace();
+            webDriver.quit();
+          }
+          try {
+            Thread.sleep(10000);// Ожидание 30
+          } catch (InterruptedException ignored) {
+          }
+        }
+
+        for (User user : accountsSoofast) {
+          long currentTime = System.currentTimeMillis();
+          long nextTime = user.getNextTime();
+          if (currentTime < nextTime){
+            continue;
+          }
+          EdgeDriver webDriver = new EdgeDriver(edgeOptions);// Получаем драйвер
+          webDriver.manage().window().maximize();// Устанавливаем размеры окна браузера
+          try{
+            new SoofastHandler(webDriver, user).run();// Handler
+            setNextTime(user);
+          }catch (Exception e){
+            e.printStackTrace();
+            webDriver.quit();
+          }
+          try {
+            Thread.sleep(10000);// Ожидание 30
+          } catch (InterruptedException ignored) {
+          }
+        }
+
         for (User user : accountsProfitCentr) {
           long currentTime = System.currentTimeMillis();
           long nextTime = user.getNextTime();
@@ -454,14 +496,14 @@ public class Manager {
     });
 
     //thread1.start();// SocPublic
-    //thread2.start();// ProfitCentr // SeoFast // SeoClub
+    thread2.start();// ProfitCentr // SeoFast // SeoClub
     //thread3.start();
     //thread4.start();
     //thread5.start();
     //thread6.start();
     //thread7.start();
     //thread8.start();
-    thread9.start();
+    //thread9.start();
 
     thread1.join();
     thread2.join();
