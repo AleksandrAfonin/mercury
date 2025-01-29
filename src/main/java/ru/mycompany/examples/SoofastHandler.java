@@ -38,13 +38,7 @@ public class SoofastHandler {
   private final String GET_VIEW = "./a[text()[contains(.,'Приступить к просмотру')]]";
 
   private final BufferedImage[] ravno;
-//  private final BufferedImage[] visits;
-//  private final BufferedImage[] roundLinc;
-//  private final BufferedImage[] id;
-//  private final BufferedImage[] to_visit;
-//  private final BufferedImage[] closeActivePage;
-//  private final BufferedImage[] closePassivePage;
-//  private final BufferedImage[] completed;
+
 
   public SoofastHandler(WebDriver webDriver, User user) throws AWTException {
     this.WEB_DRIVER = webDriver;
@@ -62,13 +56,6 @@ public class SoofastHandler {
       directory1 = new File(directory1, "edge");
     }
     this.ravno = init(directory1, "ravno");
-//    this.visits = init(directory1, "visits");
-//    this.roundLinc = init(directory1, "round_linc");
-//    this.id = init(directory1, "id");
-//    this.to_visit = init(directory1, "to_visit");
-//    this.closeActivePage = init(directory1, "actclose");
-//    this.closePassivePage = init(directory1, "pasclose");
-//    this.completed = init(directory1, "completed");
   }
 
   private BufferedImage[] init(File file, String folder) {
@@ -117,67 +104,6 @@ public class SoofastHandler {
     pause(10000);
     WEB_DRIVER.quit();
   }
-
-//  private boolean goToYouTube(){
-//    if (!expandTheListToEarn()){
-//      return false;
-//    }
-//    WebElement webElement = getElementByXpathWithCount("//*/div[@id='mnu_tblock1']/a[text()[contains(.,'YouTube')]]", 30);
-//    if (webElement == null) {
-//      System.out.println("YouTube не найдены");
-//      return false;
-//    }
-//    System.out.println("Переход на 'YouTube'");
-//    try {
-//      ACTIONS.click(webElement).perform();
-//      pause(1000);
-//      String[] texts = new String[]{"Выполнение Youtube"};
-//      int pageNum = checkPages(texts, 30);
-//      if (pageNum != 0){
-//        return false;
-//      }
-//      List<WebElement> dataElements = WEB_DRIVER.findElements(By.xpath("//*/table[@class='work-serf']/tbody/tr/td[2]/div/span[1]"));
-//      if (dataElements.isEmpty()){
-//        return true;
-//      }
-//      for (WebElement element : dataElements){
-//        if (element.getText().isEmpty()){
-//          continue;
-//        }
-//        WebElement parent = element.findElement(By.xpath(".."));
-//        pause(500);
-//        ACTIONS.click(element).perform();
-//        pause(5000);
-//        try {
-//          WebElement child = parent.findElement(By.xpath("./div/span"));
-//          if (!child.getText().equals("Приступить к просмотру")) {
-//            continue;
-//          }
-//          ACTIONS.click(child).perform();
-//        }catch (Exception e){
-//          continue;
-//        }
-//        if (isMore1TabsWithCount(5)){
-//          Object[] pages = WEB_DRIVER.getWindowHandles().toArray();
-//          WEB_DRIVER.switchTo().window((String) pages[1]);
-//          String[] contents = new String[]{"Запустите видео", };
-//          int contentNum = checkPages(texts, 30);
-//          if (contentNum != 0){
-//            startVideo();
-//          }
-//
-//
-//
-//          waitTime("Просмотр засчитан!", 200);
-//          closeAllTabs();
-//        }
-//      }
-//    } catch (TimeoutException e) {
-//      return false;
-//    }
-//    return true;
-//  }
-
 
 
 
