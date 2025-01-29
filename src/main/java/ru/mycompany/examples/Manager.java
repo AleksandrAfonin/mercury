@@ -23,6 +23,7 @@ public class Manager {
     List<User> accountsSarSeo = SQLiteProvider.getInstance().getAccountsList("sarseo");
     List<User> accountsProdvisots = SQLiteProvider.getInstance().getAccountsList("prodvisots");
     List<User> accountsSeo24 = SQLiteProvider.getInstance().getAccountsList("seo24");
+    List<User> accountsSoofast = SQLiteProvider.getInstance().getAccountsList("soofast");
 
     // Получить размеры экрана
     java.awt.Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -418,6 +419,40 @@ public class Manager {
       }
     });
 
+    Thread thread9 = new Thread(() -> { // SocPublic ========================================================
+      EdgeOptions edgeOptions = new EdgeOptions();
+      //edgeOptions.addArguments("force-device-scale-factor=0.7");// Установка масштаба контента браузера
+      edgeOptions.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});// Убрать служебную надпись
+      //edgeOptions.addArguments("--window-position=0,0");// Позиционирование браузера
+      edgeOptions.setPageLoadStrategy(PageLoadStrategy.NONE);// Не ждем полной загрузки страницы
+      while (true) {
+        for (User user : accountsSoofast) {
+          long currentTime = System.currentTimeMillis();
+          long nextTime = user.getNextTime();
+          if (currentTime < nextTime){
+            continue;
+          }
+          EdgeDriver webDriver = new EdgeDriver(edgeOptions);// Получаем драйвер
+          webDriver.manage().window().maximize();// Устанавливаем размеры окна браузера
+          try{
+            new SoofastHandler(webDriver, user).run();// Handler
+            //setNextTime(user);
+          }catch (Exception e){
+            e.printStackTrace();
+            webDriver.quit();
+          }
+          try {
+            Thread.sleep(10000);// Ожидание 30
+          } catch (InterruptedException ignored) {
+          }
+        }
+        try {
+          Thread.sleep(10000);// Ожидание 60
+        } catch (InterruptedException ignored) {
+        }
+      }
+    });
+
     //thread1.start();// SocPublic
     //thread2.start();// ProfitCentr // SeoFast // SeoClub
     //thread3.start();
@@ -425,7 +460,8 @@ public class Manager {
     //thread5.start();
     //thread6.start();
     //thread7.start();
-    thread8.start();
+    //thread8.start();
+    thread9.start();
 
     thread1.join();
     thread2.join();
@@ -435,6 +471,7 @@ public class Manager {
     thread6.join();
     thread7.join();
     thread8.join();
+    thread9.join();
   }
 
   private synchronized void setNextTime(User user){
