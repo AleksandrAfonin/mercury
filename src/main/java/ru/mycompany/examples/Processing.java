@@ -278,9 +278,16 @@ public class Processing {
   }
 
   public WebElement getElementByXpathWithCount(String xpath, int count) {
+    int wait;
+    if (count == 0){
+      wait = 0;
+      count = 1;
+    }else{
+      wait = 2000;
+    }
     WebElement webElement;
     for (int i = 0; i < count; i++) {
-      robot.delay(2000);
+      robot.delay(wait);
       try {
         webElement = WEB_DRIVER.findElement(By.xpath(xpath));
         return webElement;
@@ -291,9 +298,16 @@ public class Processing {
   }
 
   public WebElement getElementByXpathWithCount(WebElement element, String xpath, int count) {
+    int wait;
+    if (count == 0){
+      wait = 0;
+      count = 1;
+    }else{
+      wait = 2000;
+    }
     WebElement webElement;
     for (int i = 0; i < count; i++) {
-      robot.delay(2000);
+      robot.delay(wait);
       try {
         webElement = element.findElement(By.xpath(xpath));
         return webElement;
