@@ -24,6 +24,7 @@ public class Manager {
     List<User> accountsProdvisots = SQLiteProvider.getInstance().getAccountsList("prodvisots");
     List<User> accountsSeo24 = SQLiteProvider.getInstance().getAccountsList("seo24");
     List<User> accountsSoofast = SQLiteProvider.getInstance().getAccountsList("soofast");
+    List<User> accountsSeoBux = SQLiteProvider.getInstance().getAccountsList("seobux");
 
     // Получить размеры экрана
     java.awt.Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -40,7 +41,7 @@ public class Manager {
       //edgeOptions.addArguments("--window-position=0,0");// Позиционирование браузера
       edgeOptions.setPageLoadStrategy(PageLoadStrategy.NONE);// Не ждем полной загрузки страницы
       while (true) {
-        for (User user : accountsSeoClub) {
+        for (User user : accountsSeoBux) {
           long currentTime = System.currentTimeMillis();
           long nextTime = user.getNextTime();
           if (currentTime < nextTime){
@@ -49,7 +50,7 @@ public class Manager {
           EdgeDriver webDriver = new EdgeDriver(edgeOptions);// Получаем драйвер
           webDriver.manage().window().maximize();// Устанавливаем размеры окна браузера
           try{
-            new SeoClubHandler(webDriver, user).run();// Handler
+            new SeoBuxHandler(webDriver, user).run();// Handler
             //setNextTime(user);
           }catch (Exception e){
             e.printStackTrace();
