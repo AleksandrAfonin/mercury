@@ -40,7 +40,7 @@ public class Manager {
       //edgeOptions.addArguments("--window-position=0,0");// Позиционирование браузера
       edgeOptions.setPageLoadStrategy(PageLoadStrategy.NONE);// Не ждем полной загрузки страницы
       while (true) {
-        for (User user : accountsDelionix) {
+        for (User user : accountsSeoClub) {
           long currentTime = System.currentTimeMillis();
           long nextTime = user.getNextTime();
           if (currentTime < nextTime){
@@ -49,7 +49,7 @@ public class Manager {
           EdgeDriver webDriver = new EdgeDriver(edgeOptions);// Получаем драйвер
           webDriver.manage().window().maximize();// Устанавливаем размеры окна браузера
           try{
-            new DelionixHandler(webDriver, user).run();// Handler
+            new SeoClubHandler(webDriver, user).run();// Handler
             //setNextTime(user);
           }catch (Exception e){
             e.printStackTrace();
@@ -61,7 +61,7 @@ public class Manager {
           }
         }
         try {
-          Thread.sleep(60000);// Ожидание 60
+          Thread.sleep(10000);// Ожидание 60
         } catch (InterruptedException ignored) {
         }
       }
@@ -495,8 +495,8 @@ public class Manager {
       }
     });
 
-    //thread1.start();// SocPublic
-    thread2.start();// ProfitCentr // SeoFast // SeoClub
+    thread1.start();// SocPublic
+    //thread2.start();// ProfitCentr // SeoFast // SeoClub
     //thread3.start();
     //thread4.start();
     //thread5.start();
