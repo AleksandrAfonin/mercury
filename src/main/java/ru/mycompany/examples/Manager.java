@@ -96,7 +96,7 @@ public class Manager {
             webDriver.quit();
           }
           try {
-            Thread.sleep(10000);// Ожидание 30
+            Thread.sleep(5000);// Ожидание 30
           } catch (InterruptedException ignored) {
           }
         }
@@ -117,7 +117,7 @@ public class Manager {
             webDriver.quit();
           }
           try {
-            Thread.sleep(10000);// Ожидание 30
+            Thread.sleep(5000);// Ожидание 30
           } catch (InterruptedException ignored) {
           }
         }
@@ -138,7 +138,7 @@ public class Manager {
             webDriver.quit();
           }
           try {
-            Thread.sleep(10000);// Ожидание 30
+            Thread.sleep(5000);// Ожидание 30
           } catch (InterruptedException ignored) {
           }
         }
@@ -159,7 +159,7 @@ public class Manager {
             webDriver.quit();
           }
           try {
-            Thread.sleep(10000);// Ожидание 30
+            Thread.sleep(5000);// Ожидание 30
           } catch (InterruptedException ignored) {
           }
         }
@@ -180,7 +180,7 @@ public class Manager {
             webDriver.quit();
           }
           try {
-            Thread.sleep(10000);// Ожидание 30 секунд
+            Thread.sleep(5000);// Ожидание 30 секунд
           } catch (InterruptedException ignored) {
           }
         }
@@ -201,7 +201,7 @@ public class Manager {
             webDriver.quit();
           }
           try {
-            Thread.sleep(10000);// Ожидание 30 секунд
+            Thread.sleep(5000);// Ожидание 30 секунд
           } catch (InterruptedException ignored) {
           }
         }
@@ -222,7 +222,7 @@ public class Manager {
             webDriver.quit();
           }
           try {
-            Thread.sleep(10000);// Ожидание 30 минут
+            Thread.sleep(5000);// Ожидание 30 минут
           } catch (InterruptedException ignored) {
           }
         }
@@ -243,7 +243,7 @@ public class Manager {
             webDriver.quit();
           }
           try {
-            Thread.sleep(10000);// Ожидание 30 минут
+            Thread.sleep(5000);// Ожидание 30 минут
           } catch (InterruptedException ignored) {
           }
         }
@@ -264,7 +264,7 @@ public class Manager {
             webDriver.quit();
           }
           try {
-            Thread.sleep(10000);// Ожидание 30
+            Thread.sleep(5000);// Ожидание 30
           } catch (InterruptedException ignored) {
           }
         }

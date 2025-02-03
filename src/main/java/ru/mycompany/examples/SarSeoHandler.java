@@ -115,7 +115,7 @@ public class SarSeoHandler {
 //      return;
 //    }
 
-    pause(10000);
+    pause(5000);
     WEB_DRIVER.quit();
   }
 
