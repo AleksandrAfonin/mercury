@@ -36,7 +36,11 @@ public class SoofastHandler {
   private final String DINAMIC_LINK = "//*/td[@id='contentwrapper']/div[text()[contains(.,'Динамические ссылки')]]";// Контроль страницы динамических ссылок
   private final String TABLE_SURFING = "//*/table[@class='work-serf']/tbody/tr/td[2]/div/a";
   private final String GET_VIEW = "./a[text()[contains(.,'Приступить к просмотру')]]";
-
+  private final String GO_RUTUBE = "//*/div[@id='mnu_tblock1']/a[text()[contains(.,'RuTube')]]";
+  private final String RUTUBE_CONTROL = "//*/td[@id='contentwrapper']/div[text()[contains(.,'Выполнение rutube')]]";
+  private final String TABLE_RUTUBE = "//*/td[@id='contentwrapper']/div[2]/div/table[@class='work-serf']";
+  private final String CLICK_LINK_RUTUBE = "./tbody/tr/td[2]/div[1]/span[1]";
+  private final String CLICK_VIEW_RUTUBE = "./tbody/tr/td[2]/div[1]/div/span[text()[contains(.,'Приступить к просмотру')]]";
   private final BufferedImage[] ravno;
 
 
@@ -90,8 +94,13 @@ public class SoofastHandler {
 //      WEB_DRIVER.quit();
 //      return;
 //    }
-//
+
     if (!goToPaidSurfing()) {
+      WEB_DRIVER.quit();
+      return;
+    }
+
+    if (!goToRuTube()) {
       WEB_DRIVER.quit();
       return;
     }
@@ -105,7 +114,64 @@ public class SoofastHandler {
     WEB_DRIVER.quit();
   }
 
-
+  private boolean goToRuTube() {
+    WEB_DRIVER.get(WEB_DRIVER.getCurrentUrl());
+    WebElement webElement = processing.getElementByXpathWithCount(WELL_COME, 30);
+    if (webElement == null){
+      return false;
+    }
+    processing.scrollPageDown(500);
+    if (!expandTheListToEarn()){
+      return false;
+    }
+    webElement = processing.getElementByXpathWithCount(GO_RUTUBE, 30);
+    if (webElement == null) {
+      return false;
+    }
+    try {
+      ACTIONS.click(webElement).perform();
+      pause(2000);
+      WebElement checkPage = processing.getElementByXpathWithCount(RUTUBE_CONTROL, 30);
+      if (checkPage == null){
+        return false;
+      }
+      processing.scrollPageDown(200);
+      List<WebElement> dataElements = WEB_DRIVER.findElements(By.xpath(TABLE_RUTUBE));
+      if (dataElements.isEmpty()){
+        return true;
+      }
+      for (WebElement element : dataElements){
+        WebElement el = processing.getElementByXpathWithCount(element, CLICK_LINK_RUTUBE, 1);
+        if (el == null){
+          continue;
+        }
+        ACTIONS.click(el).perform();
+        try{
+          el = processing.getElementByXpathWithCount(element, CLICK_VIEW_RUTUBE, 30);
+          if (el == null){
+            continue;
+          }
+          ACTIONS.click(el).perform();
+          pause(5000);
+        }catch (Exception e){
+          continue;
+        }
+        if (processing.isMore1TabsWithCount(30)){
+          Object[] windowsHandles = WEB_DRIVER.getWindowHandles().toArray();
+          WEB_DRIVER.switchTo().window((String) windowsHandles[1]);
+          pause(10000);
+          processing.mouseLeftClick(400, 300, 100,100);
+          pause(7000);
+          confirmVideo();
+          processing.closeAllTabs(30);
+        }
+        processing.scrollPageDown(60);
+      }
+    } catch (TimeoutException e) {
+      return false;
+    }
+    return true;
+  }
 
   private boolean goToPaidSurfing(){
     processing.scrollPageDown(500);
@@ -152,7 +218,7 @@ public class SoofastHandler {
           confirm();
           processing.closeAllTabs(30);
         }
-        processing.scrollPageDown(55);
+        processing.scrollPageDown(60);
       }
     } catch (TimeoutException e) {
       return false;
@@ -171,6 +237,16 @@ public class SoofastHandler {
       return false;
     }
     ACTIONS.click(webElement).perform();
+    pause(5000);
+    return true;
+  }
+
+  private boolean confirmVideo(){
+    WebElement webElement = processing.getElementByXpathWithCount(CONFIRM, 200);
+    if (webElement == null){
+      return false;
+    }
+    processing.clickInteractable(webElement, 200);
     pause(5000);
     return true;
   }

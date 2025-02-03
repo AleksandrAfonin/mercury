@@ -80,6 +80,27 @@ public class Manager {
       //edgeOptions.addArguments("--window-position=" + width + ",0");// Позиционирование браузера
       edgeOptions.setPageLoadStrategy(PageLoadStrategy.NONE);// Не ждем полной загрузки страницы
       while (true) {
+        for (User user : accountsSeoBux) {
+          long currentTime = System.currentTimeMillis();
+          long nextTime = user.getNextTime();
+          if (currentTime < nextTime){
+            continue;
+          }
+          EdgeDriver webDriver = new EdgeDriver(edgeOptions);// Получаем драйвер
+          webDriver.manage().window().maximize();// Устанавливаем размеры окна браузера
+          try{
+            new SeoBuxHandler(webDriver, user).run();// Handler
+            setNextTime(user);
+          }catch (Exception e){
+            e.printStackTrace();
+            webDriver.quit();
+          }
+          try {
+            Thread.sleep(10000);// Ожидание 30
+          } catch (InterruptedException ignored) {
+          }
+        }
+
         for (User user : accountsProdvisots) {
           long currentTime = System.currentTimeMillis();
           long nextTime = user.getNextTime();
@@ -248,11 +269,6 @@ public class Manager {
           }
         }
 
-
-        try {
-          Thread.sleep(60000);// Ожидание 60
-        } catch (InterruptedException ignored) {
-        }
       }
     });
 
@@ -496,15 +512,15 @@ public class Manager {
       }
     });
 
-    thread1.start();// SocPublic
-    //thread2.start();// ProfitCentr // SeoFast // SeoClub
-    //thread3.start();
-    //thread4.start();
-    //thread5.start();
-    //thread6.start();
-    //thread7.start();
-    //thread8.start();
-    //thread9.start();
+    //thread1.start();// SeoBux
+    thread2.start();// ============== General ==============
+    //thread3.start();// WMRFast
+    //thread4.start();// SoeFast
+    //thread5.start();// SeoClub
+    //thread6.start();// SarSeo
+    //thread7.start();// Prodvisots
+    //thread8.start();// Seo24
+    //thread9.start();// Soofast
 
     thread1.join();
     thread2.join();
