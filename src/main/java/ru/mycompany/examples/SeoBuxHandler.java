@@ -25,27 +25,34 @@ public class SeoBuxHandler {
   private final String OUT_CAPCHA_TITLE = "//*/div[@class='out-capcha-title']/b";
   private final String TABLE_CAPCHA = "//*/form[@id='login-form']/div[4]/label[@class='out-capcha-lab']";
   private final String GO_SURFING = "//*/div[@id='mnu_tblock1']/a[text()[contains(.,'Серфинг сайтов')]]";
+  private final String GO_RUTUBE = "//*/div[@id='mnu_tblock1']/a[text()[contains(.,'RuTube')]]";
   private final String SURFING_CONTROL = "//*/td[@id='contentwrapper']/div[text()[contains(.,'Динамические ссылки')]]";
-  private final String GET_FRAME = "//*/frame[@name='frminfo']";// Получить фрейм просмотра
+  private final String RUTUBE_CONTROL = "//*/td[@id='contentwrapper']/div[text()[contains(.,'Выполнение RuTube')]]";
+  private final String GET_FRAME = "//*/iframe[@id='video-start']";// Получить фрейм просмотра
   private final String MENU = "//*/div[@id='mnu_tblock1']";// Меню
-  private final String TABLE_SURFING = "//*/table[@class='work-serf']";
-  private final String CONTROL_3_COLUMN = "./tbody/tr/td[3]";
+  private final String TABLE_SURFING = "//*/div[@class='datasortX']/div/table[@class='work-serf']";
+  private final String TABLE_RUTUBE = "//*/td[@id='contentwrapper']/div/table[@class='work-serf']";
+  private final String CONFIRM = "//*/a[@class='btn_capt']";// Подтвердить просмотр
   private final String CLICK_LINK = "./tbody/tr/td[2]/div/a";
+  private final String CLICK_LINK_RUTUBE = "./tbody/tr/td[2]/div/span[1]";
   private final String CLICK_VIEW = "./tbody/tr/td[2]/div/a[text()[contains(.,'Приступить к просмотру')]]";
-  private final String FORM_INPUT = "//*/form/input";
+  private final String CLICK_VIEW_RUTUBE = "./tbody/tr/td[2]/div[1]/div/span[text()[contains(.,'Приступить к просмотру')]]";
+  private final String PLAY_BUTTON = "//*/button[@type='button']";
   private final String FORM_BUTTON = "//*/form/button";
   private final String GO_TRANSITION = "//*/div[@id='mnu_tblock1']/a[text()[contains(.,'Переходы')]]";
   private final String TRANSITION_CONTROL = "//*/td[@id='contentwrapper']/div[text()[contains(.,'Переходы')]]";
   private final String TABLE_TRANSITION = "//*/table[@class='work-serf']/tbody/tr/td[2]/div/a";
+  private final String SLIDER_INPUT = "//*/table/tbody/tr/td[2]/input[@id='code-video']";
+  private final String SLIDER_BUTTON = "//*/table/tbody/tr/td[2]/button[text()[contains(.,'Отправить')]]";
 
 
 
   public SeoBuxHandler(WebDriver webDriver, User user) throws AWTException {
     this.WEB_DRIVER = webDriver;
-    this.processing = new Processing(webDriver);
+    this.ACTIONS = new Actions(webDriver, Duration.ofSeconds(1));
+    this.processing = new Processing(webDriver, ACTIONS);
     this.E_MAIL = user.getLogin();
     this.PASSWORD = user.getPassword();
-    this.ACTIONS = new Actions(webDriver, Duration.ofSeconds(1));
     this.URL = "https://seobyx.ru/login";
   }
 
@@ -68,10 +75,16 @@ public class SeoBuxHandler {
 //      return;
 //    }
 //
-//    if (!goToPaidSurfing()) {
-//      WEB_DRIVER.quit();
-//      return;
-//    }
+    if (!goToPaidSurfing()) {
+      WEB_DRIVER.quit();
+      return;
+    }
+
+    if (!goToRuTube()) {
+      WEB_DRIVER.quit();
+      return;
+    }
+
 ////=============================
 //    if (!goToPaidTransitions()) {
 //      WEB_DRIVER.quit();
@@ -93,71 +106,82 @@ public class SeoBuxHandler {
     WEB_DRIVER.quit();
   }
 
-//  private boolean goToYouTube(){
-//    if (!expandTheListToEarn()){
-//      return false;
-//    }
-//    WebElement webElement = getElementByXpathWithCount("//*/div[@id='mnu_tblock1']/a[text()[contains(.,'YouTube')]]", 30);
-//    if (webElement == null) {
-//      System.out.println("YouTube не найдены");
-//      return false;
-//    }
-//    System.out.println("Переход на 'YouTube'");
-//    try {
-//      ACTIONS.click(webElement).perform();
-//      pause(1000);
-//      String[] texts = new String[]{"Выполнение Youtube"};
-//      int pageNum = checkPages(texts, 30);
-//      if (pageNum != 0){
-//        return false;
-//      }
-//      List<WebElement> dataElements = WEB_DRIVER.findElements(By.xpath("//*/table[@class='work-serf']/tbody/tr/td[2]/div/span[1]"));
-//      if (dataElements.isEmpty()){
-//        return true;
-//      }
-//      for (WebElement element : dataElements){
-//        if (element.getText().isEmpty()){
-//          continue;
-//        }
-//        WebElement parent = element.findElement(By.xpath(".."));
-//        pause(500);
-//        ACTIONS.click(element).perform();
-//        pause(5000);
-//        try {
-//          WebElement child = parent.findElement(By.xpath("./div/span"));
-//          if (!child.getText().equals("Приступить к просмотру")) {
-//            continue;
-//          }
-//          ACTIONS.click(child).perform();
-//        }catch (Exception e){
-//          continue;
-//        }
-//        if (isMore1TabsWithCount(5)){
-//          Object[] pages = WEB_DRIVER.getWindowHandles().toArray();
-//          WEB_DRIVER.switchTo().window((String) pages[1]);
-//          String[] contents = new String[]{"Запустите видео", };
-//          int contentNum = checkPages(texts, 30);
-//          if (contentNum != 0){
-//            startVideo();
-//          }
-//
-//
-//
-//          waitTime("Просмотр засчитан!", 200);
-//          closeAllTabs();
-//        }
-//      }
-//    } catch (TimeoutException e) {
-//      return false;
-//    }
-//    return true;
-//  }
+  private boolean goToRuTube() {
+    WEB_DRIVER.get(WEB_DRIVER.getCurrentUrl());
+    WebElement webElement = processing.getElementByXpathWithCount(WELL_COME, 30);
+    if (webElement == null){
+      return false;
+    }
+    processing.scrollPageDown(300);
+    if (!expandTheListToEarn()){
+      return false;
+    }
+    webElement = processing.getElementByXpathWithCount(GO_RUTUBE, 30);
+    if (webElement == null) {
+      return false;
+    }
+    try {
+      ACTIONS.click(webElement).perform();
+      pause(2000);
+      WebElement checkPage = processing.getElementByXpathWithCount(RUTUBE_CONTROL, 30);
+      if (checkPage == null){
+        return false;
+      }
+      processing.scrollPageDown(200);
+      List<WebElement> dataElements = WEB_DRIVER.findElements(By.xpath(TABLE_RUTUBE));
+      if (dataElements.isEmpty()){
+        return true;
+      }
+      for (WebElement element : dataElements){
+        WebElement el = processing.getElementByXpathWithCount(element, CLICK_LINK_RUTUBE, 1);
+        if (el == null){
+          continue;
+        }
+        ACTIONS.click(el).perform();
+        try{
+          el = processing.getElementByXpathWithCount(element, CLICK_VIEW_RUTUBE, 30);
+          if (el == null){
+            continue;
+          }
+          ACTIONS.click(el).perform();
+          pause(5000);
+        }catch (Exception e){
+          continue;
+        }
+        if (processing.isMore1TabsWithCount(30)){
+          Object[] windowsHandles = WEB_DRIVER.getWindowHandles().toArray();
+          WEB_DRIVER.switchTo().window((String) windowsHandles[1]);
+          pause(10000);
+          processing.mouseLeftClick(400, 300, 100,100);
+          moveSlider();
+          processing.closeAllTabs(30);
+        }
+        processing.scrollPageDown(60);
+      }
+    } catch (TimeoutException e) {
+      return false;
+    }
+    return true;
+  }
 
-
-
+  private boolean moveSlider(){
+    WebElement webElement = processing.getElementByXpathWithCount(SLIDER_INPUT, 200);
+    if (webElement == null){
+      return false;
+    }
+    String max = webElement.getAttribute("max");
+    JavascriptExecutor javascriptExecutor = (JavascriptExecutor) WEB_DRIVER;
+    javascriptExecutor.executeScript("arguments[0].setAttribute('value', '" + max +"');", webElement);
+    pause(200);
+    javascriptExecutor.executeScript("arguments[0].setAttribute('wfd-id', 'id0');", webElement);
+    webElement = processing.getElementByXpathWithCount(SLIDER_BUTTON, 5);
+    processing.clickInteractable(webElement, 200);
+    pause(5000);
+    return true;
+  }
 
   private boolean goToPaidSurfing(){
-    processing.scrollPageDown(500);
+    processing.scrollPageDown(300);
     if (!expandTheListToEarn()){
       return false;
     }
@@ -172,25 +196,12 @@ public class SeoBuxHandler {
       if (checkPage == null){
         return false;
       }
+      processing.scrollPageDown(200);
       List<WebElement> dataElements = WEB_DRIVER.findElements(By.xpath(TABLE_SURFING));
-      List<WebElement> elements = new ArrayList<>();
       if (dataElements.isEmpty()){
         return true;
       }
       for (WebElement element : dataElements){
-        if (element.getText().isBlank()){
-          continue;
-        }
-        WebElement el = processing.getElementByXpathWithCount(element, CONTROL_3_COLUMN, 0);
-        if (el == null){
-          continue;
-        }
-        elements.add(element);
-      }
-      if (elements.isEmpty()){
-        return true;
-      }
-      for (WebElement element : elements){
         WebElement el = processing.getElementByXpathWithCount(element, CLICK_LINK, 1);
         if (el == null){
           continue;
@@ -209,9 +220,11 @@ public class SeoBuxHandler {
         if (processing.isMore1TabsWithCount(30)){
           Object[] windowsHandles = WEB_DRIVER.getWindowHandles().toArray();
           WEB_DRIVER.switchTo().window((String) windowsHandles[1]);
-          moveSlider();
+          pause(5000);
+          confirm();
           processing.closeAllTabs(30);
         }
+        processing.scrollPageDown(60);
       }
     } catch (TimeoutException e) {
       return false;
@@ -219,23 +232,12 @@ public class SeoBuxHandler {
     return true;
   }
 
-  private boolean moveSlider(){
-    WebElement webElement = processing.getElementByXpathWithCount(GET_FRAME, 30);
+  private boolean confirm(){
+    WebElement webElement = processing.getElementByXpathWithCount(CONFIRM, 200);
     if (webElement == null){
       return false;
     }
-    WEB_DRIVER.switchTo().frame(webElement);
-    webElement = processing.getElementByXpathWithCount(FORM_INPUT, 200);
-    if (webElement == null){
-      return false;
-    }
-    String max = webElement.getAttribute("max");
-    JavascriptExecutor javascriptExecutor = (JavascriptExecutor) WEB_DRIVER;
-    javascriptExecutor.executeScript("arguments[0].setAttribute('value', '" + max +"');", webElement);
-    pause(200);
-    javascriptExecutor.executeScript("arguments[0].setAttribute('wfd-id', 'id0');", webElement);
-    webElement = processing.getElementByXpathWithCount(FORM_BUTTON, 5);
-    ACTIONS.click(webElement).perform();
+    processing.clickInteractable(webElement, 20);
     pause(5000);
     return true;
   }

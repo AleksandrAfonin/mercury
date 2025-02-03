@@ -37,11 +37,10 @@ public class SeoFastHandlerRobot {
 
   public SeoFastHandlerRobot(WebDriver webDriver, User user) throws AWTException {
     this.WEB_DRIVER = webDriver;
-    this.processing = new Processing(webDriver);
+    this.ACTIONS = new Actions(webDriver, Duration.ofSeconds(1));
+    this.processing = new Processing(webDriver, ACTIONS);
     this.E_MAIL = user.getLogin();
     this.PASSWORD = user.getPassword();
-    this.ACTIONS = new Actions(webDriver, Duration.ofSeconds(1));
-
     this.header = new Rectangle(270, 2, 900, 30);
     this.URL = "https://seo-fast.ru/login";
 

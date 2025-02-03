@@ -39,10 +39,10 @@ public class Seo24Handler {
 
   public Seo24Handler(WebDriver webDriver, User user) throws AWTException {
     this.WEB_DRIVER = webDriver;
-    this.processing = new Processing(webDriver);
+    this.ACTIONS = new Actions(webDriver, Duration.ofSeconds(1));
+    this.processing = new Processing(webDriver, ACTIONS);
     this.E_MAIL = user.getLogin();
     this.PASSWORD = user.getPassword();
-    this.ACTIONS = new Actions(webDriver, Duration.ofSeconds(1));
     this.URL = "https://seo-24.pro";
 
   }
@@ -127,21 +127,9 @@ public class Seo24Handler {
     if (webElement == null) {
       return false;
     }
-    clickInteractable(webElement, 20);
+    processing.clickInteractable(webElement, 20);
     pause(5000);
     return true;
-  }
-
-  private boolean clickInteractable(WebElement webElement, int count){
-    for (int i = 0; i < count; i++) {
-      try {
-        ACTIONS.click(webElement).perform();
-        return true;
-      }catch (ElementNotInteractableException e){
-        pause(2000);
-      }
-    }
-    return false;
   }
 
   private boolean expandTheListToEarn() {

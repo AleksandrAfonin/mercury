@@ -42,10 +42,10 @@ public class SeoClubHandler {
 
   public SeoClubHandler(WebDriver webDriver, User user) throws AWTException {
     this.WEB_DRIVER = webDriver;
-    this.processing = new Processing(webDriver);
+    this.ACTIONS = new Actions(webDriver, Duration.ofSeconds(1));
+    this.processing = new Processing(webDriver, ACTIONS);
     this.E_MAIL = user.getLogin();
     this.PASSWORD = user.getPassword();
-    this.ACTIONS = new Actions(webDriver, Duration.ofSeconds(1));
     this.URL = "https://seoclub.su/login";
   }
 

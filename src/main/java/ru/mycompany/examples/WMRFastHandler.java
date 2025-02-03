@@ -33,10 +33,10 @@ public class WMRFastHandler {
 
   public WMRFastHandler(WebDriver webDriver, User user) throws AWTException, IOException {
     this.WEB_DRIVER = webDriver;
-    this.processing = new Processing(webDriver);
+    this.ACTIONS = new Actions(webDriver, Duration.ofSeconds(1));
+    this.processing = new Processing(webDriver, ACTIONS);
     this.LOGIN = user.getLogin();
     this.PASSWORD = user.getPassword();
-    this.ACTIONS = new Actions(webDriver, Duration.ofSeconds(1));
     this.SITE_URL = "https://wmrfast.com";
 
     File directory1 = new File(new File(".", "sprites"), "wmrfast");

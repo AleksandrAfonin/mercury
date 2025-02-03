@@ -4,6 +4,7 @@ package ru.mycompany.examples;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Actions;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -15,6 +16,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 
 public class Processing {
   private BufferedImage screen;
@@ -25,6 +27,7 @@ public class Processing {
   private int Y;
   private final Tesseract tesseract;
   private final WebDriver WEB_DRIVER;
+  private final Actions ACTIONS;
 
   public Rectangle getFullScreen(){
     return fullScreen;
@@ -34,13 +37,14 @@ public class Processing {
     this.screen = screen;
   }
 
-  public Processing(WebDriver webDriver) throws AWTException {
+  public Processing(WebDriver webDriver, Actions actions) throws AWTException {
     GraphicsDevice[] graphicsDevices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
     this.robot = new Robot(graphicsDevices[0]);
     this.fullScreen = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
     this.tesseract = new Tesseract();
     this.tesseract.setDatapath("./tessdata");
     this.WEB_DRIVER = webDriver;
+    this.ACTIONS = actions;
   }
 
   public String resolveWMRCaptcha() {
@@ -174,6 +178,28 @@ public class Processing {
     robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
     robot.delay(100);
     robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+  }
+
+  public void mouseLeftClick(int x, int y, int difX, int difY){
+    Point secondPoint = new Point(x, y);
+    secondPoint.x = (int) (secondPoint.x + Math.random() * difX);
+    secondPoint.y = (int) (secondPoint.y + Math.random() * difY);
+    mouseMove(secondPoint);
+    robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+    robot.delay(100);
+    robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+  }
+
+  public boolean clickInteractable(WebElement webElement, int count){
+    for (int i = 0; i < count; i++) {
+      try {
+        ACTIONS.click(webElement).perform();
+        return true;
+      }catch (ElementNotInteractableException e){
+        robot.delay(2000);
+      }
+    }
+    return false;
   }
 
   public Point find(BufferedImage[] images, boolean isRefresh, int count){
