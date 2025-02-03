@@ -147,7 +147,7 @@ public class WMRFastHandler {
         try {
           for (WebElement element : dataElements) {
             WebElement link = element.findElement(By.xpath("./table/tbody/tr/td[2]/a"));
-            processing.clickInteractable(link, 30);
+            ACTIONS.click(link).perform();
             pause(3000);
             if (isMore1TabsWithCount(5)) {
               waitTime("Просмотр засчитан!", 100);
@@ -155,8 +155,7 @@ public class WMRFastHandler {
               pause(7000);
             }
           }
-        } catch (JavascriptException e) {
-          System.out.println("JS :) 146");
+        } catch (ElementNotInteractableException | JavascriptException ignored) {
         }
         WEB_DRIVER.get(WEB_DRIVER.getCurrentUrl());
         pause(1000);
