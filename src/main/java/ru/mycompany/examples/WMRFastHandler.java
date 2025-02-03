@@ -147,7 +147,7 @@ public class WMRFastHandler {
         try {
           for (WebElement element : dataElements) {
             WebElement link = element.findElement(By.xpath("./table/tbody/tr/td[2]/a"));
-            ACTIONS.click(link).perform();
+            processing.clickInteractable(link, 30);
             pause(3000);
             if (isMore1TabsWithCount(5)) {
               waitTime("Просмотр засчитан!", 100);
