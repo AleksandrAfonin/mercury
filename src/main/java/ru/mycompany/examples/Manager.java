@@ -25,6 +25,7 @@ public class Manager {
     List<User> accountsSeo24 = SQLiteProvider.getInstance().getAccountsList("seo24");
     List<User> accountsSoofast = SQLiteProvider.getInstance().getAccountsList("soofast");
     List<User> accountsSeoBux = SQLiteProvider.getInstance().getAccountsList("seobux");
+    List<User> accountsProfitCentr24 = SQLiteProvider.getInstance().getAccountsList("profitcentr24");
 
     // Получить размеры экрана
     java.awt.Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -80,6 +81,27 @@ public class Manager {
       //edgeOptions.addArguments("--window-position=" + width + ",0");// Позиционирование браузера
       edgeOptions.setPageLoadStrategy(PageLoadStrategy.NONE);// Не ждем полной загрузки страницы
       while (true) {
+        for (User user : accountsProfitCentr24) {
+          long currentTime = System.currentTimeMillis();
+          long nextTime = user.getNextTime();
+          if (currentTime < nextTime){
+            continue;
+          }
+          EdgeDriver webDriver = new EdgeDriver(edgeOptions);// Получаем драйвер
+          webDriver.manage().window().maximize();// Устанавливаем размеры окна браузера
+          try{
+            new ProfitCentr24Handler(webDriver, user).run();// Handler
+            setNextTime(user);
+          }catch (Exception e){
+            e.printStackTrace();
+            webDriver.quit();
+          }
+          try {
+            Thread.sleep(5000);// Ожидание 30
+          } catch (InterruptedException ignored) {
+          }
+        }
+
         for (User user : accountsSeoBux) {
           long currentTime = System.currentTimeMillis();
           long nextTime = user.getNextTime();
@@ -512,6 +534,36 @@ public class Manager {
       }
     });
 
+    Thread thread10 = new Thread(() -> { // SocPublic ========================================================
+      EdgeOptions edgeOptions = new EdgeOptions();
+      //edgeOptions.addArguments("force-device-scale-factor=0.7");// Установка масштаба контента браузера
+      edgeOptions.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});// Убрать служебную надпись
+      //edgeOptions.addArguments("--window-position=0,0");// Позиционирование браузера
+      edgeOptions.setPageLoadStrategy(PageLoadStrategy.NONE);// Не ждем полной загрузки страницы
+      while (true) {
+        for (User user : accountsProfitCentr24) {
+          long currentTime = System.currentTimeMillis();
+          long nextTime = user.getNextTime();
+          if (currentTime < nextTime){
+            continue;
+          }
+          EdgeDriver webDriver = new EdgeDriver(edgeOptions);// Получаем драйвер
+          webDriver.manage().window().maximize();// Устанавливаем размеры окна браузера
+          try{
+            new ProfitCentr24Handler(webDriver, user).run();// Handler
+            //setNextTime(user);
+          }catch (Exception e){
+            e.printStackTrace();
+            webDriver.quit();
+          }
+          try {
+            Thread.sleep(5000);// Ожидание 30
+          } catch (InterruptedException ignored) {
+          }
+        }
+      }
+    });
+
     //thread1.start();// SeoBux
     thread2.start();// ============== General ==============
     //thread3.start();// WMRFast
@@ -521,6 +573,7 @@ public class Manager {
     //thread7.start();// Prodvisots
     //thread8.start();// Seo24
     //thread9.start();// Soofast
+    //thread10.start();// ProfitCentr24
 
     thread1.join();
     thread2.join();
@@ -531,6 +584,8 @@ public class Manager {
     thread7.join();
     thread8.join();
     thread9.join();
+    thread10.join();
+
   }
 
   private synchronized void setNextTime(User user){
