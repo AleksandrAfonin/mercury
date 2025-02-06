@@ -144,15 +144,17 @@ public class WMRFastHandler {
         if (dataElements.isEmpty()) {
           break;
         }
+        processing.scrollPageDown(700);
         try {
           for (WebElement element : dataElements) {
             WebElement link = element.findElement(By.xpath("./table/tbody/tr/td[2]/a"));
             ACTIONS.click(link).perform();
             pause(3000);
-            if (isMore1TabsWithCount(5)) {
-              waitTime("Просмотр засчитан!", 100);
-              closeAllTabs();
+            if (processing.isMore1TabsWithCount(5)) {
+              processing.waitTimeOnTitlePage("Просмотр засчитан!", 100);
+              processing.closeAllTabs(30);
               pause(7000);
+              processing.scrollPageDown(45);
             }
           }
         } catch (ElementNotInteractableException | JavascriptException ignored) {
@@ -164,27 +166,6 @@ public class WMRFastHandler {
       return false;
     }
     return true;
-  }
-
-  private boolean waitTime(String titleName, int maxCount) {
-    for (int i = 0; i < maxCount; i++) {
-      pause(2000);
-      String title = WEB_DRIVER.getTitle();
-      if (titleName.equals(title)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private boolean isMore1TabsWithCount(int count) {
-    for (int i = 0; i < count; i++) {
-      pause(2000);
-      if (WEB_DRIVER.getWindowHandles().toArray().length > 1) {
-        return true;
-      }
-    }
-    return false;
   }
 
   private boolean expandTheListToEarn() {
@@ -199,26 +180,26 @@ public class WMRFastHandler {
     return true;
   }
 
-  private boolean closeAllTabs() {
-    int count = 30;
-    while (count-- > 0) {
-      Object[] windowsHandles = WEB_DRIVER.getWindowHandles().toArray();
-      if (windowsHandles.length == 1) {
-        return true;
-      }
-      pause(1000);
-      for (int i = 1; i < windowsHandles.length; i++) {
-        try {
-          WEB_DRIVER.switchTo().window((String) windowsHandles[i]);
-          WEB_DRIVER.close();
-        } catch (WebDriverException ignored) {
-        }
-      }
-      WEB_DRIVER.switchTo().window((String) windowsHandles[0]);
-      pause(500);
-    }
-    return false;
-  }
+//  private boolean closeAllTabs() {
+//    int count = 30;
+//    while (count-- > 0) {
+//      Object[] windowsHandles = WEB_DRIVER.getWindowHandles().toArray();
+//      if (windowsHandles.length == 1) {
+//        return true;
+//      }
+//      pause(1000);
+//      for (int i = 1; i < windowsHandles.length; i++) {
+//        try {
+//          WEB_DRIVER.switchTo().window((String) windowsHandles[i]);
+//          WEB_DRIVER.close();
+//        } catch (WebDriverException ignored) {
+//        }
+//      }
+//      WEB_DRIVER.switchTo().window((String) windowsHandles[0]);
+//      pause(500);
+//    }
+//    return false;
+//  }
 
   /**
    * Проверка, существует ли вкладка с title
@@ -238,46 +219,6 @@ public class WMRFastHandler {
       //System.out.println("False");
     }
     return false;
-  }
-
-  private boolean performingClicks(Map<WebElement, Integer> links) {
-    if (links == null || links.isEmpty()) {
-      return true;
-    }
-    try {
-      System.out.println("Начинаем переходы:");
-      //((JavascriptExecutor) WEB_DRIVER).executeScript("document.title = 'AnchorTab'");
-      mainTabHandle = WEB_DRIVER.getWindowHandle();
-      mainTabTitle = WEB_DRIVER.getTitle();
-      int count = 0;
-      for (Map.Entry<WebElement, Integer> entry : links.entrySet()) {
-        if (!closeAllTabs()) {
-          return false;
-        }
-        WEB_DRIVER.switchTo().window(mainTabHandle);
-        long timer = entry.getValue();
-        try {
-          ACTIONS.click(entry.getKey()).perform();
-          if (!beginVisit()) {
-            continue;
-          }
-        } catch (JavascriptException ignored) {
-        }
-        //pause(timer);
-        System.out.print("\rВыполнено: " + ++count + " из " + links.size());
-
-      }
-
-      if (!closeAllTabs()) {
-        return false;
-      }
-      WEB_DRIVER.switchTo().window(mainTabHandle);
-      System.out.println();
-      return true;
-    } catch (TimeoutException e) {
-      System.out.println("performingClicks: TimeoutException");
-      return false;
-    }
   }
 
   private boolean isClickPlay(int count) {
@@ -339,40 +280,6 @@ public class WMRFastHandler {
     ACTIONS.click(webElement).perform();
     pause(5000);
     return true;
-  }
-
-  /**
-   * Получить мапу кликабельных ссылок
-   *
-   * @return - мапа
-   */
-  private Map<WebElement, Integer> getDataForClicks() {
-    List<WebElement> tr;
-    Map<WebElement, Integer> links = new HashMap<>();
-    int size;
-    int count = 2;
-    while (count-- > 0) {
-      try {
-        pause(10000);
-        tr = WEB_DRIVER.findElements(By.xpath("//tr"));
-        for (WebElement webElement : tr) {
-          try {
-            WebElement link = webElement.findElement(By.xpath("./td/a[@class='serf_hash']"));
-            //WebElement time = webElement.findElement(By.xpath("./td/span[@class='clickprice']"));
-            //String timeText = time.getText();
-            //int tm = Integer.parseInt(timeText.substring(0, timeText.indexOf(" ")));
-            links.put(link, 1000);
-          } catch (NoSuchElementException ignored) {
-          }
-        }
-        size = links.size();
-        System.out.println("Размер мапы: " + size);
-        break;
-      } catch (TimeoutException e) {
-        System.out.println("Ну и что, что TimeoutException");
-      }
-    }
-    return links;
   }
 
   /**
