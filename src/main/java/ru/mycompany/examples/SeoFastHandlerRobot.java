@@ -105,7 +105,6 @@ public class SeoFastHandlerRobot {
     pause(15000, 5000);
     performingClicks();
 //===============================
-    System.out.println(point);
     pause(5000, 0);
     WEB_DRIVER.quit();
   }
@@ -201,7 +200,6 @@ public class SeoFastHandlerRobot {
     if (point == null) {
       return false;
     }
-    System.out.println(point);
     processing.mouseLeftClick(point, 250, 10);
     processing.sendKey(E_MAIL);
     pause(500, 500);

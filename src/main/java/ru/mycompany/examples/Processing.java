@@ -251,7 +251,6 @@ public class Processing {
     for (int i = 0; i <= screen.getHeight() - image.getHeight(); i++) {
       for (int j = 0; j <= screen.getWidth() - image.getWidth(); j++) {
         if (compareImage(image, screen, j, i)){
-          //System.out.println("X: " + j + "   Y: " + i);
           return new Point(j, i);
         }
       }

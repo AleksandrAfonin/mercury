@@ -595,7 +595,7 @@ public class Manager {
     });
 
     //thread1.start();// SeoBux
-    //thread2.start();// ============== General ==============
+    thread2.start();// ============== General ==============
     //thread3.start();// WMRFast
     //thread4.start();// SoeFast
     //thread5.start();// SeoClub
@@ -604,7 +604,7 @@ public class Manager {
     //thread8.start();// Seo24
     //thread9.start();// Soofast
     //thread10.start();// ProfitCentr24
-    thread11.start();// SeoFast
+    //thread11.start();// SeoFast
 
     thread1.join();
     thread2.join();
@@ -616,6 +616,7 @@ public class Manager {
     thread8.join();
     thread9.join();
     thread10.join();
+    thread11.join();
 
   }
 
