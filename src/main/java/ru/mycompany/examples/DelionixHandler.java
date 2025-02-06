@@ -4,6 +4,7 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 
 import java.time.Duration;
+import java.util.Date;
 import java.util.List;
 
 public class DelionixHandler {
@@ -22,8 +23,9 @@ public class DelionixHandler {
   }
 
   public void run() throws WebDriverException {
-
-    System.out.println("Account: " + E_MAIL);
+    System.out.println();
+    Date date = new Date(System.currentTimeMillis());
+    System.out.println(date + "   Account: " + E_MAIL);
 
     if (!start()) {
       WEB_DRIVER.quit();

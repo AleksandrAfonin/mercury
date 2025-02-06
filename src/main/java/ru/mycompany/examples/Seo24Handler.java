@@ -48,6 +48,7 @@ public class Seo24Handler {
   }
 
   public void run() throws WebDriverException {
+    System.out.println();
     Date date = new Date(System.currentTimeMillis());
     System.out.println(date + "    Account: " + E_MAIL);
 

@@ -564,8 +564,38 @@ public class Manager {
       }
     });
 
+    Thread thread11 = new Thread(() -> { // SeoFast ========================================================
+      ChromeOptions chromeOptions = new ChromeOptions();
+      //edgeOptions.addArguments("force-device-scale-factor=0.7");// Установка масштаба контента браузера
+      chromeOptions.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});// Убрать служебную надпись
+      //edgeOptions.addArguments("--window-position=0,0");// Позиционирование браузера
+      chromeOptions.setPageLoadStrategy(PageLoadStrategy.NONE);// Не ждем полной загрузки страницы
+      while (true) {
+        for (User user : accountsSoeFast) {
+          long currentTime = System.currentTimeMillis();
+          long nextTime = user.getNextTime();
+          if (currentTime < nextTime){
+            continue;
+          }
+          ChromeDriver webDriver = new ChromeDriver(chromeOptions);// Получаем драйвер
+          webDriver.manage().window().maximize();// Устанавливаем размеры окна браузера
+          try{
+            new SeoFastHandlerRobot(webDriver, user).run();// Handler
+            //setNextTime(user);
+          }catch (Exception e){
+            e.printStackTrace();
+            webDriver.quit();
+          }
+          try {
+            Thread.sleep(5000);// Ожидание 30
+          } catch (InterruptedException ignored) {
+          }
+        }
+      }
+    });
+
     //thread1.start();// SeoBux
-    thread2.start();// ============== General ==============
+    //thread2.start();// ============== General ==============
     //thread3.start();// WMRFast
     //thread4.start();// SoeFast
     //thread5.start();// SeoClub
@@ -574,6 +604,7 @@ public class Manager {
     //thread8.start();// Seo24
     //thread9.start();// Soofast
     //thread10.start();// ProfitCentr24
+    thread11.start();// SeoFast
 
     thread1.join();
     thread2.join();

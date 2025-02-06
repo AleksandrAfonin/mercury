@@ -77,6 +77,7 @@ public class SeoFastHandlerRobot {
   }
 
   public void run() throws WebDriverException {
+    System.out.println();
     Date date = new Date(System.currentTimeMillis());
     System.out.println(date + "   Account: " + E_MAIL);
 
@@ -96,10 +97,12 @@ public class SeoFastHandlerRobot {
       WEB_DRIVER.quit();
       return;
     }
-    System.out.println(point);
     processing.mouseLeftClick(point, 80, 10);
     pause(15000, 5000);
 
+    performingClicks();
+    WEB_DRIVER.get(WEB_DRIVER.getCurrentUrl());
+    pause(15000, 5000);
     performingClicks();
 //===============================
     System.out.println(point);
@@ -110,13 +113,13 @@ public class SeoFastHandlerRobot {
 
   private void performingClicks() {
     boolean isFinish = false;
+    Point point = new Point();
     while (true) {
-      Point point = new Point();
       point.x = 550;
       point.y = 400;
       processing.mouseMove(point);
       processing.mouseScrollDown(6);
-      pause(3000, 1000);
+      pause(1000, 1000);
       List<Point> points = getPointsList();
       if (points.isEmpty()) {
         if (isFinish) {
@@ -126,7 +129,6 @@ public class SeoFastHandlerRobot {
         continue;
       }
       isFinish = false;
-      System.out.println("Size: " + points.size());
       for (Point p : points) {
         p.x = p.x + 65;
         processing.mouseLeftClick(p, 8, 8);
@@ -134,7 +136,6 @@ public class SeoFastHandlerRobot {
           continue;
         }
         processing.find(completed, header, true, 90);
-        System.out.println("completed:");
         closeAllTabs();
         processing.refreshScreen();
       }
@@ -146,7 +147,6 @@ public class SeoFastHandlerRobot {
     for (int i = 0; i < 10; i++) {
       pause(2000, 0);
       Point point = processing.find(to_visit, rectangle, true, 1);
-      //System.out.println("Point: " + point);
       if (point != null) {
         pause(1000, 1000);
         processing.mouseMove(point);
@@ -171,8 +171,6 @@ public class SeoFastHandlerRobot {
       if (point == null) {
         break;
       }
-      System.out.println(point);
-      //processing.mouseMove(point);
       Rectangle rectangle = new Rectangle(point.x, point.y, 100, 32);
       Point pointId = processing.find(id, rectangle, true, 1);
       if (pointId == null) {
@@ -180,7 +178,6 @@ public class SeoFastHandlerRobot {
         field.height = yPoint - field.y;
         continue;
       }
-      //processing.mouseMove(pointId);
       points.add(point);
       field.y = point.y + 10;
       field.height = yPoint - field.y;
