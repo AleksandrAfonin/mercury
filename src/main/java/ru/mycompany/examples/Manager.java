@@ -26,6 +26,9 @@ public class Manager {
     List<User> accountsSoofast = SQLiteProvider.getInstance().getAccountsList("soofast");
     List<User> accountsSeoBux = SQLiteProvider.getInstance().getAccountsList("seobux");
     List<User> accountsProfitCentr24 = SQLiteProvider.getInstance().getAccountsList("profitcentr24");
+    List<User> accountsGoldenClicks = SQLiteProvider.getInstance().getAccountsList("goldenclicks");
+    List<User> accountsSeoJump = SQLiteProvider.getInstance().getAccountsList("seojump");
+    List<User> accountsSeoGold = SQLiteProvider.getInstance().getAccountsList("seogold");
 
     // Получить размеры экрана
     java.awt.Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -81,6 +84,69 @@ public class Manager {
       //edgeOptions.addArguments("--window-position=" + width + ",0");// Позиционирование браузера
       edgeOptions.setPageLoadStrategy(PageLoadStrategy.NONE);// Не ждем полной загрузки страницы
       while (true) {
+        for (User user : accountsGoldenClicks) {
+          long currentTime = System.currentTimeMillis();
+          long nextTime = user.getNextTime();
+          if (currentTime < nextTime){
+            continue;
+          }
+          EdgeDriver webDriver = new EdgeDriver(edgeOptions);// Получаем драйвер
+          webDriver.manage().window().maximize();// Устанавливаем размеры окна браузера
+          try{
+            new GoldenClicksHandler(webDriver, user).run();// Handler
+            setNextTime(user);
+          }catch (Exception e){
+            e.printStackTrace();
+            webDriver.quit();
+          }
+          try {
+            Thread.sleep(5000);// Ожидание 30
+          } catch (InterruptedException ignored) {
+          }
+        }
+
+        for (User user : accountsSeoJump) {
+          long currentTime = System.currentTimeMillis();
+          long nextTime = user.getNextTime();
+          if (currentTime < nextTime){
+            continue;
+          }
+          EdgeDriver webDriver = new EdgeDriver(edgeOptions);// Получаем драйвер
+          webDriver.manage().window().maximize();// Устанавливаем размеры окна браузера
+          try{
+            new SeoJumpHandler(webDriver, user).run();// Handler
+            setNextTime(user);
+          }catch (Exception e){
+            e.printStackTrace();
+            webDriver.quit();
+          }
+          try {
+            Thread.sleep(5000);// Ожидание 30
+          } catch (InterruptedException ignored) {
+          }
+        }
+
+        for (User user : accountsSeoGold) {
+          long currentTime = System.currentTimeMillis();
+          long nextTime = user.getNextTime();
+          if (currentTime < nextTime){
+            continue;
+          }
+          EdgeDriver webDriver = new EdgeDriver(edgeOptions);// Получаем драйвер
+          webDriver.manage().window().maximize();// Устанавливаем размеры окна браузера
+          try{
+            new SeoGoldHandler(webDriver, user).run();// Handler
+            setNextTime(user);
+          }catch (Exception e){
+            e.printStackTrace();
+            webDriver.quit();
+          }
+          try {
+            Thread.sleep(5000);// Ожидание 30
+          } catch (InterruptedException ignored) {
+          }
+        }
+
         for (User user : accountsProfitCentr24) {
           long currentTime = System.currentTimeMillis();
           long nextTime = user.getNextTime();
@@ -594,6 +660,96 @@ public class Manager {
       }
     });
 
+    Thread thread12 = new Thread(() -> { // SocPublic ========================================================
+      EdgeOptions edgeOptions = new EdgeOptions();
+      //edgeOptions.addArguments("force-device-scale-factor=0.7");// Установка масштаба контента браузера
+      edgeOptions.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});// Убрать служебную надпись
+      //edgeOptions.addArguments("--window-position=0,0");// Позиционирование браузера
+      edgeOptions.setPageLoadStrategy(PageLoadStrategy.NONE);// Не ждем полной загрузки страницы
+      while (true) {
+        for (User user : accountsGoldenClicks) {
+          long currentTime = System.currentTimeMillis();
+          long nextTime = user.getNextTime();
+          if (currentTime < nextTime){
+            continue;
+          }
+          EdgeDriver webDriver = new EdgeDriver(edgeOptions);// Получаем драйвер
+          webDriver.manage().window().maximize();// Устанавливаем размеры окна браузера
+          try{
+            new GoldenClicksHandler(webDriver, user).run();// Handler
+            //setNextTime(user);
+          }catch (Exception e){
+            e.printStackTrace();
+            webDriver.quit();
+          }
+          try {
+            Thread.sleep(5000);// Ожидание 30
+          } catch (InterruptedException ignored) {
+          }
+        }
+      }
+    });
+
+    Thread thread13 = new Thread(() -> { // SocPublic ========================================================
+      EdgeOptions edgeOptions = new EdgeOptions();
+      //edgeOptions.addArguments("force-device-scale-factor=0.7");// Установка масштаба контента браузера
+      edgeOptions.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});// Убрать служебную надпись
+      //edgeOptions.addArguments("--window-position=0,0");// Позиционирование браузера
+      edgeOptions.setPageLoadStrategy(PageLoadStrategy.NONE);// Не ждем полной загрузки страницы
+      while (true) {
+        for (User user : accountsSeoJump) {
+          long currentTime = System.currentTimeMillis();
+          long nextTime = user.getNextTime();
+          if (currentTime < nextTime){
+            continue;
+          }
+          EdgeDriver webDriver = new EdgeDriver(edgeOptions);// Получаем драйвер
+          webDriver.manage().window().maximize();// Устанавливаем размеры окна браузера
+          try{
+            new SeoJumpHandler(webDriver, user).run();// Handler
+            //setNextTime(user);
+          }catch (Exception e){
+            e.printStackTrace();
+            webDriver.quit();
+          }
+          try {
+            Thread.sleep(5000);// Ожидание 30
+          } catch (InterruptedException ignored) {
+          }
+        }
+      }
+    });
+
+    Thread thread14 = new Thread(() -> { // SocPublic ========================================================
+      EdgeOptions edgeOptions = new EdgeOptions();
+      //edgeOptions.addArguments("force-device-scale-factor=0.7");// Установка масштаба контента браузера
+      edgeOptions.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});// Убрать служебную надпись
+      //edgeOptions.addArguments("--window-position=0,0");// Позиционирование браузера
+      edgeOptions.setPageLoadStrategy(PageLoadStrategy.NONE);// Не ждем полной загрузки страницы
+      while (true) {
+        for (User user : accountsSeoGold) {
+          long currentTime = System.currentTimeMillis();
+          long nextTime = user.getNextTime();
+          if (currentTime < nextTime){
+            continue;
+          }
+          EdgeDriver webDriver = new EdgeDriver(edgeOptions);// Получаем драйвер
+          webDriver.manage().window().maximize();// Устанавливаем размеры окна браузера
+          try{
+            new SeoGoldHandler(webDriver, user).run();// Handler
+            //setNextTime(user);
+          }catch (Exception e){
+            e.printStackTrace();
+            webDriver.quit();
+          }
+          try {
+            Thread.sleep(5000);// Ожидание 30
+          } catch (InterruptedException ignored) {
+          }
+        }
+      }
+    });
+
     //thread1.start();// SeoBux
     thread2.start();// ============== General ==============
     //thread3.start();// WMRFast
@@ -605,6 +761,9 @@ public class Manager {
     //thread9.start();// Soofast
     //thread10.start();// ProfitCentr24
     //thread11.start();// SeoFast
+    //thread12.start();// Golden-Clicks
+    //thread13.start();// Seo-Jump
+    //thread14.start();// Seo-Gold
 
     thread1.join();
     thread2.join();
@@ -617,6 +776,9 @@ public class Manager {
     thread9.join();
     thread10.join();
     thread11.join();
+    thread12.join();
+    thread13.join();
+    thread14.join();
 
   }
 

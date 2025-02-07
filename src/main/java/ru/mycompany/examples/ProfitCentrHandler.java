@@ -112,7 +112,6 @@ public class ProfitCentrHandler {
       System.out.println("Оплачиваемые переходы не найдены");
       return false;
     }
-    System.out.println("Переход на 'Переходы'");
     try {
       ACTIONS.click(webElement).perform();
       pause(1000);
@@ -148,7 +147,6 @@ public class ProfitCentrHandler {
       System.out.println("Серфинг сайтов не найдены");
       return false;
     }
-    System.out.println("Переход на 'Серфинг сайтов'");
     try {
       ACTIONS.click(webElement).perform();
       pause(500);
@@ -203,7 +201,6 @@ public class ProfitCentrHandler {
       System.out.println("YouTube не найдены");
       return false;
     }
-    System.out.println("Переход на 'YouTube'");
     try {
       ACTIONS.click(webElement).perform();
       pause(1000);

@@ -202,26 +202,6 @@ public class WMRFastHandler {
 //    return false;
 //  }
 
-  /**
-   * Проверка, существует ли вкладка с title
-   *
-   * @param titles - строковый массив возможных вариантов
-   * @param title  - title текущей вкладки
-   * @return true - существует
-   * false - не существует
-   */
-  private boolean isExistTab(String[] titles, String title) {
-    for (String s : titles) {
-      //System.out.println(s + " :: " + title);
-      if (title.matches(s)) {
-        //System.out.println("True");
-        return true;
-      }
-      //System.out.println("False");
-    }
-    return false;
-  }
-
   private boolean isClickPlay(int count) {
     System.out.println("begin isClickPlay");
     Object[] windowHandles = WEB_DRIVER.getWindowHandles().toArray();
@@ -235,8 +215,6 @@ public class WMRFastHandler {
       pause(2000);
       try {
         WebElement webElement = WEB_DRIVER.findElement(By.xpath("//button[@aria-label='Смотреть']"));
-        //button[@title="Смотреть"]
-        //WebElement webElement = WEB_DRIVER.findElement(By.xpath("//*/DIV[@id='player']/DIV/DIV/BUTTON"));
         System.out.println("Click Ok isClickPlay");
         ACTIONS.click(webElement).perform();
         return true;
@@ -244,7 +222,6 @@ public class WMRFastHandler {
         System.out.println("No element isClickPlay");
       }
     }
-    //ACTIONS.click(frame).perform();
     return false;
   }
 
@@ -316,7 +293,6 @@ public class WMRFastHandler {
     }
     processing.refreshScreen(new Rectangle(point.x + 57, point.y + 39, 56, 15));
     String number = processing.resolveWMRCaptcha();
-    System.out.println("Number: " + number);
     webElement = WEB_DRIVER.findElement(By.id("cap_text"));
     ACTIONS.sendKeys(webElement, number).perform();
     pause(2000);
