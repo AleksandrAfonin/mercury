@@ -29,6 +29,7 @@ public class Manager {
     List<User> accountsGoldenClicks = SQLiteProvider.getInstance().getAccountsList("goldenclicks");
     List<User> accountsSeoJump = SQLiteProvider.getInstance().getAccountsList("seojump");
     List<User> accountsSeoGold = SQLiteProvider.getInstance().getAccountsList("seogold");
+    List<User> accountsSeoSprings = SQLiteProvider.getInstance().getAccountsList("seosprings");
 
     // Получить размеры экрана
     java.awt.Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -84,6 +85,27 @@ public class Manager {
       //edgeOptions.addArguments("--window-position=" + width + ",0");// Позиционирование браузера
       edgeOptions.setPageLoadStrategy(PageLoadStrategy.NONE);// Не ждем полной загрузки страницы
       while (true) {
+        for (User user : accountsSeoSprings) {
+          long currentTime = System.currentTimeMillis();
+          long nextTime = user.getNextTime();
+          if (currentTime < nextTime){
+            continue;
+          }
+          EdgeDriver webDriver = new EdgeDriver(edgeOptions);// Получаем драйвер
+          webDriver.manage().window().maximize();// Устанавливаем размеры окна браузера
+          try{
+            new SeoSpringsHandler(webDriver, user).run();// Handler
+            setNextTime(user);
+          }catch (Exception e){
+            e.printStackTrace();
+            webDriver.quit();
+          }
+          try {
+            Thread.sleep(5000);// Ожидание 30
+          } catch (InterruptedException ignored) {
+          }
+        }
+
         for (User user : accountsGoldenClicks) {
           long currentTime = System.currentTimeMillis();
           long nextTime = user.getNextTime();
@@ -750,6 +772,36 @@ public class Manager {
       }
     });
 
+    Thread thread15 = new Thread(() -> { // SocPublic ========================================================
+      EdgeOptions edgeOptions = new EdgeOptions();
+      //edgeOptions.addArguments("force-device-scale-factor=0.7");// Установка масштаба контента браузера
+      edgeOptions.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});// Убрать служебную надпись
+      //edgeOptions.addArguments("--window-position=0,0");// Позиционирование браузера
+      edgeOptions.setPageLoadStrategy(PageLoadStrategy.NONE);// Не ждем полной загрузки страницы
+      while (true) {
+        for (User user : accountsSeoSprings) {
+          long currentTime = System.currentTimeMillis();
+          long nextTime = user.getNextTime();
+          if (currentTime < nextTime){
+            continue;
+          }
+          EdgeDriver webDriver = new EdgeDriver(edgeOptions);// Получаем драйвер
+          webDriver.manage().window().maximize();// Устанавливаем размеры окна браузера
+          try{
+            new SeoSpringsHandler(webDriver, user).run();// Handler
+            //setNextTime(user);
+          }catch (Exception e){
+            e.printStackTrace();
+            webDriver.quit();
+          }
+          try {
+            Thread.sleep(5000);// Ожидание 30
+          } catch (InterruptedException ignored) {
+          }
+        }
+      }
+    });
+
     //thread1.start();// SeoBux
     thread2.start();// ============== General ==============
     //thread3.start();// WMRFast
@@ -764,6 +816,7 @@ public class Manager {
     //thread12.start();// Golden-Clicks
     //thread13.start();// Seo-Jump
     //thread14.start();// Seo-Gold
+    //thread15.start();// Seo-Springs
 
     thread1.join();
     thread2.join();
@@ -779,6 +832,7 @@ public class Manager {
     thread12.join();
     thread13.join();
     thread14.join();
+    thread15.join();
 
   }
 
