@@ -7,7 +7,7 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 
-public class AvisoHandler {
+public class AvisoHandler implements Handler{
   private final WebDriver WEB_DRIVER;
   private final String E_MAIL;    // alsupp@yandex.ru
   private final String PASSWORD;  // 19b650660b
@@ -22,6 +22,7 @@ public class AvisoHandler {
     this.URL = "https://aviso.bz/login";
   }
 
+  @Override
   public void run() throws WebDriverException {
     System.out.println();
     Date date = new Date(System.currentTimeMillis());

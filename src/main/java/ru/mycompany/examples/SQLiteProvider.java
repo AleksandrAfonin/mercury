@@ -12,7 +12,7 @@ public class SQLiteProvider {
   private final String DATABASE_URL = "jdbc:sqlite:database/mercury.sqlite";
   private Connection connection;
   private final String GET_ACCOUNTS_LIST = """
-          SELECT accounts.id, login, password, nexttime, intervalminutes FROM accounts, sites 
+          SELECT accounts.id, login, password, browser, handler, nexttime, intervalminutes FROM accounts, sites 
           WHERE accounts.sitename = sites.id 
           AND sites.sitename = ? AND accounts.isenable = 'true';""";
   private PreparedStatement getAccountLislStatement;
@@ -90,6 +90,8 @@ public class SQLiteProvider {
                 resultSet.getInt("id"),
                 resultSet.getString("login"),
                 resultSet.getString("password"),
+                resultSet.getString("browser"),
+                resultSet.getString("handler"),
                 resultSet.getLong("nexttime"),
                 resultSet.getInt("intervalminutes")
         ));

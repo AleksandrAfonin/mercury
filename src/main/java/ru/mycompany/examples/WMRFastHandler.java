@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class WMRFastHandler {
+public class WMRFastHandler implements Handler{
   private final WebDriver WEB_DRIVER;
   private final String LOGIN;    // alsupp@yandex.ru
   private final String PASSWORD;  // 19b650660b
@@ -63,6 +63,7 @@ public class WMRFastHandler {
     return bufferedImages;
   }
 
+  @Override
   public void run() throws WebDriverException {
     System.out.println();
     Date date = new Date(System.currentTimeMillis());

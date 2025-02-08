@@ -6,7 +6,7 @@ import org.openqa.selenium.interactions.Actions;
 import java.time.Duration;
 import java.util.Date;
 
-public class SocPublicHandler {
+public class SocPublicHandler implements Handler{
   private final WebDriver WEB_DRIVER;
   private final String E_MAIL;    // alsupp@yandex.ru
   private final String PASSWORD;  // 19b650660b
@@ -21,6 +21,7 @@ public class SocPublicHandler {
     this.URL = "https://socpublic.com/auth_login.html";
   }
 
+  @Override
   public void run() throws WebDriverException {
     System.out.println();
     Date date = new Date(System.currentTimeMillis());

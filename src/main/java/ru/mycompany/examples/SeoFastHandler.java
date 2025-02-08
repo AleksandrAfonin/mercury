@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
 
-public class SeoFastHandler {
+public class SeoFastHandler implements Handler{
   private final WebDriver WEB_DRIVER;
   private final String E_MAIL;    // alsupp@yandex.ru
   private final String PASSWORD;  // 19b650660b
@@ -28,6 +28,7 @@ public class SeoFastHandler {
     this.DIRECTORY = new File(".", "captcha");
   }
 
+  @Override
   public void run() throws WebDriverException {
     System.out.println();
     Date date = new Date(System.currentTimeMillis());

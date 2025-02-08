@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class SeoFastHandlerRobot {
+public class SeoFastHandlerRobot implements Handler{
   private final WebDriver WEB_DRIVER;
   private final String E_MAIL;    // alsupp@yandex.ru
   private final String PASSWORD;  // 19b650660b
@@ -76,6 +76,7 @@ public class SeoFastHandlerRobot {
     return bufferedImages;
   }
 
+  @Override
   public void run() throws WebDriverException {
     System.out.println();
     Date date = new Date(System.currentTimeMillis());

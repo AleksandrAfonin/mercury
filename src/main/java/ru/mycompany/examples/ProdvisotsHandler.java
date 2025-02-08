@@ -17,7 +17,7 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 
-public class ProdvisotsHandler {
+public class ProdvisotsHandler implements Handler{
   private final WebDriver WEB_DRIVER;
   private final String E_MAIL;    // alsupp@yandex.ru
   private final String PASSWORD;  // 19b650660b
@@ -38,15 +38,7 @@ public class ProdvisotsHandler {
   private final String DINAMIC_LINK = "//*/td[@id='contentwrapper']/div[text()[contains(.,'Динамические ссылки')]]";// Контроль страницы динамических ссылок
   private final String TABLE_SURFING = "//*/table[@class='work-serf']/tbody/tr/td[2]/div/a";
   private final String GET_VIEW = "./a[text()[contains(.,'Приступить к просмотру')]]";
-
   private final BufferedImage[] ravno;
-//  private final BufferedImage[] visits;
-//  private final BufferedImage[] roundLinc;
-//  private final BufferedImage[] id;
-//  private final BufferedImage[] to_visit;
-//  private final BufferedImage[] closeActivePage;
-//  private final BufferedImage[] closePassivePage;
-//  private final BufferedImage[] completed;
 
   public ProdvisotsHandler(WebDriver webDriver, User user) throws AWTException {
     this.WEB_DRIVER = webDriver;
@@ -64,13 +56,6 @@ public class ProdvisotsHandler {
       directory1 = new File(directory1, "edge");
     }
     this.ravno = init(directory1, "ravno");
-//    this.visits = init(directory1, "visits");
-//    this.roundLinc = init(directory1, "round_linc");
-//    this.id = init(directory1, "id");
-//    this.to_visit = init(directory1, "to_visit");
-//    this.closeActivePage = init(directory1, "actclose");
-//    this.closePassivePage = init(directory1, "pasclose");
-//    this.completed = init(directory1, "completed");
   }
 
   private BufferedImage[] init(File file, String folder) {
@@ -87,6 +72,7 @@ public class ProdvisotsHandler {
     return bufferedImages;
   }
 
+  @Override
   public void run() throws WebDriverException {
     System.out.println();
     Date date = new Date(System.currentTimeMillis());
