@@ -173,7 +173,7 @@ public class SeoSpringsHandler implements Handler{
       if (dataElements.isEmpty()){
         return true;
       }
-      processing.scrollPageDown(500);
+      processing.scrollPageDown(550);
       for (WebElement element : dataElements){
         if (element.getText().isEmpty()){
           continue;
@@ -252,7 +252,7 @@ public class SeoSpringsHandler implements Handler{
     if (webElement == null){
       return false;
     }
-    processing.scrollPageDown(100);
+    processing.scrollPageDown(250);
     if (enterAccountData()) {
       webElement = processing.getElementByXpathWithCount(WELL_COME, 30);
       if (webElement == null){

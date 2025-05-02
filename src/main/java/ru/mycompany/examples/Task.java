@@ -33,7 +33,7 @@ public class Task implements Runnable {
       webDriver.manage().window().maximize();// Устанавливаем размеры окна браузера
       try {
         getHandler(webDriver, user).run();
-        setNextTime(user);
+        //setNextTime(user);
       } catch (Exception e) {
         e.printStackTrace();
         webDriver.quit();

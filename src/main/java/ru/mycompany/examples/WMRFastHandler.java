@@ -292,7 +292,7 @@ public class WMRFastHandler implements Handler{
       WEB_DRIVER.quit();
       return false;
     }
-    processing.refreshScreen(new Rectangle(point.x + 57, point.y + 39, 56, 15));
+    processing.refreshScreen(new Rectangle(point.x - 20, point.y + 10, 94, 14));
     String number = processing.resolveWMRCaptcha();
     webElement = WEB_DRIVER.findElement(By.id("cap_text"));
     ACTIONS.sendKeys(webElement, number).perform();

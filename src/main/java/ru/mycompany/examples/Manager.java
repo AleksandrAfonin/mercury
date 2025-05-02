@@ -16,20 +16,22 @@ import java.util.List;
 public class Manager {
 
   public void start() throws InterruptedException, WebDriverException {
-    List<String> sites = Arrays.asList("seosprings",
-            "goldenclicks",
-            "seojump",
-            "seogold",
-            "profitcentr24",
-            "seobux",
-            "prodvisots",
-            "seo24",
-            "soofast",
-            "profitcentr",
-            "seofast",
-            "seoclub",
-            "wmrfast",
-            "sarseo");
+    List<String> sites = Arrays.asList(
+//            "seosprings",
+//            "goldenclicks",
+//            "seojump",
+//            "seogold",
+//            "profitcentr24",
+//            "seobux",
+//            "prodvisots",
+//            "seo24",
+//            "soofast",
+//            "profitcentr",
+//            "seofast"
+//            "seoclub",
+            "wmrfast"
+//            "sarseo"
+            );
     List<Task> tasks = new ArrayList<>();
     for (String site : sites){
       tasks.add(new Task(site));

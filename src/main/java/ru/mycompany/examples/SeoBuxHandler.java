@@ -239,7 +239,7 @@ public class SeoBuxHandler implements Handler{
     if (webElement == null){
       return false;
     }
-    processing.clickInteractable(webElement, 20);
+    processing.clickInteractable(webElement, 30);
     pause(5000);
     return true;
   }
