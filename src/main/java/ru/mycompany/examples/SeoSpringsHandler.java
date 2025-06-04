@@ -211,12 +211,12 @@ public class SeoSpringsHandler implements Handler{
       return false;
     }
     WEB_DRIVER.switchTo().frame(webElement);
-    webElement = processing.getElementByXpathWithCount(CONFIRM, 200);
+    webElement = processing.getElementByXpathWithCount(CONFIRM, 220);
     if (webElement == null){
       return false;
     }
     ACTIONS.click(webElement).perform();
-    pause(5000);
+    pause(15000);
     return true;
   }
 

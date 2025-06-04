@@ -18,20 +18,20 @@ public class Manager {
   public void start() throws InterruptedException, WebDriverException {
     List<String> sites = Arrays.asList(
 //            "seosprings",
-//            "goldenclicks",
-//            "seojump",
-//            "seogold",
-//            "profitcentr24",
+//            "goldenclicks",//+
+//            "seojump"---
+//            "seogold",//+
+//            "profitcentr24",//+
 //            "seobux",
 //            "prodvisots",
-//            "seo24",
+//            "seo24"====
 //            "soofast",
-//            "profitcentr",
-//            "seofast"
+            "profitcentr",
+            "seofast"
 //            "seoclub",
-            "wmrfast"
+//            "wmrfast"
 //            "sarseo"
-            );
+    );
     List<Task> tasks = new ArrayList<>();
     for (String site : sites){
       tasks.add(new Task(site));

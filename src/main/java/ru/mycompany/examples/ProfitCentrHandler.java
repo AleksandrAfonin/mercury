@@ -58,10 +58,10 @@ public class ProfitCentrHandler implements Handler{
       return;
     }
 //================================
-    if (!goToYouTube()) {
-      WEB_DRIVER.quit();
-      return;
-    }
+//    if (!goToYouTube()) {
+//      WEB_DRIVER.quit();
+//      return;
+//    }
 
     pause(5000);
     WEB_DRIVER.quit();

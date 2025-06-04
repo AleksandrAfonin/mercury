@@ -23,8 +23,6 @@ public class Processing {
   private BufferedImage subScreen;
   private final Robot robot;
   private final Rectangle fullScreen;
-  private int X;
-  private int Y;
   private final Tesseract tesseract;
   private final WebDriver WEB_DRIVER;
   private final Actions ACTIONS;
@@ -132,8 +130,6 @@ public class Processing {
 
   public void refreshScreen(Rectangle rectangle){
     subScreen = robot.createScreenCapture(rectangle);
-    X = rectangle.x;
-    Y = rectangle.y;
     try {
       ImageIO.write(subScreen, "png", new File("./image/3.png"));
     } catch (IOException e) {
@@ -170,18 +166,19 @@ public class Processing {
     robot.mouseMove(point.x, point.y);
   }
 
+  public void mouseMove(int x, int y){
+    robot.mouseMove(x, y);
+  }
+
   public void mouseLeftClick(Point point, int difX, int difY){
-    Point secondPoint = new Point(point);
-    secondPoint.x = (int) (secondPoint.x + Math.random() * difX);
-    secondPoint.y = (int) (secondPoint.y + Math.random() * difY);
-    mouseMove(secondPoint);
-    robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-    robot.delay(100);
-    robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+    click(new Point(point), difX, difY);
   }
 
   public void mouseLeftClick(int x, int y, int difX, int difY){
-    Point secondPoint = new Point(x, y);
+    click(new Point(x, y), difX, difY);
+  }
+
+  private void click(Point secondPoint, int difX, int difY){
     secondPoint.x = (int) (secondPoint.x + Math.random() * difX);
     secondPoint.y = (int) (secondPoint.y + Math.random() * difY);
     mouseMove(secondPoint);
@@ -237,8 +234,8 @@ public class Processing {
       for (BufferedImage image : images) {
         Point point = findImage(image, subScreen);
         if (point != null) {
-          point.x = point.x + X;
-          point.y = point.y + Y;
+          point.x = point.x + rectangle.x;
+          point.y = point.y + rectangle.y;
           return point;
         }
       }
