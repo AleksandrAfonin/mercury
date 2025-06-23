@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Manager implements Runnable{
-  private GeneralWindow generalWindow;
+  private final GeneralWindow generalWindow;
   private boolean isStop;
-  private List<String> sites;
+  private final List<String> sites;
 
   public Manager(List<String> sites, GeneralWindow generalWindow){
     this.generalWindow = generalWindow;
@@ -55,7 +55,6 @@ public class Manager implements Runnable{
               throw new RuntimeException(e);
           }
           if (isStop){
-          System.out.println("stoped");
           generalWindow.setLabelButton();
           return;
         }

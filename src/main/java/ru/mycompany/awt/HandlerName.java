@@ -1,0 +1,21 @@
+package ru.mycompany.awt;
+
+public enum HandlerName {
+  AVISO,
+  DELIONIX,
+  GOLDENCLICKS,
+  PRODVISOTS,
+  PROFITCENTR24,
+  PROFITCENTR,
+  SARSEO,
+  SEO24,
+  SEOBUX,
+  SEOCLUB,
+  SEOFAST,
+  SEOGOLD,
+  SEOJUMP,
+  SEOSPRINGS,
+  SOCPUBLIC,
+  SOOFAST,
+  WMRFAST,
+}

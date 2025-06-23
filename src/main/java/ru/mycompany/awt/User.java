@@ -1,8 +1,5 @@
 package ru.mycompany.awt;
 
-import ru.mycompany.examples.Browser;
-import ru.mycompany.examples.HandlerName;
-
 public class User {
   private final int id;
   private final String login;
