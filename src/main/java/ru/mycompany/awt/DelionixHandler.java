@@ -413,7 +413,7 @@ public class DelionixHandler implements Handler {
         String nameImage = webElement.getText().trim();
         nameImage = nameImage.substring(nameImage.lastIndexOf(" ") + 1);
         List<WebElement> webElements = WEB_DRIVER.findElements(By.xpath("//*/tr/td[@colspan='2']/div[@class='out-capcha']/label[@class='out-capcha-lab']"));
-        ru.mycompany.examples.SQLiteProvider sqLiteProvider = ru.mycompany.examples.SQLiteProvider.getInstance();
+        SQLiteProvider sqLiteProvider = SQLiteProvider.getInstance();
         for (int i = 0; i < 5; i++) {
             String content = webElements.get(i).getAttribute("style");
             if (sqLiteProvider.checkImageInDelionixTable(nameImage, content)) {

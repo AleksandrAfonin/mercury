@@ -47,9 +47,10 @@ public class SeoFastHandlerRobot implements Handler {
         browser = processing.getBrowserName(webDriver);
 
         this.email = SQLiteProvider.getInstance().getSprites(sitename, browser, "e-mail");
-        this.enterControlPoint = new ControlPoint(sitename, browser, "enter", 15, 17, -130, -4, 265, 26);
-        this.enterControlPoint.addRectangleClick("e-mail", new Rectangle(-140, -78, 286, 18));
-        this.enterControlPoint.addRectangleClick("password", new Rectangle(-140, -42, 286, 18));
+        this.enterControlPoint = new ControlPoint(sitename, browser, "enter", 15, 17, new Rectangle(600, 300, 120, 70));
+        this.enterControlPoint.addRectangleClick("_", new Rectangle(-97, -4, 250, 26));
+        this.enterControlPoint.addRectangleClick("e-mail", new Rectangle(-115, -78, 280, 18));
+        this.enterControlPoint.addRectangleClick("password", new Rectangle(-115, -42, 280, 18));
         this.visits = SQLiteProvider.getInstance().getSprites(sitename, browser,"visits");
         this.roundLinc = SQLiteProvider.getInstance().getSprites(sitename, browser,"round-linc");
         this.id = SQLiteProvider.getInstance().getSprites(sitename, browser,"id");

@@ -63,7 +63,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>ru.mycompany.examples.Application</mainClass>
+                            <mainClass>ru.mycompany.awt.Application</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

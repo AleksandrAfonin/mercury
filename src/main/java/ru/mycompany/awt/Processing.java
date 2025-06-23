@@ -227,24 +227,26 @@ public class Processing {
   }
 
   public Point find(ControlPoint controlPoint, boolean isRefresh, int count){
-    for (int i = 0; i < count; i++) {
-      if (count > 1){
-        robot.delay(2000);
-      }
-      if (isRefresh){
-        refreshScreen();
-      }
-      if (screen == null){
-        return null;
-      }
-      for (BufferedImage image : controlPoint.getImages()) {
-        Point point = findImage(image, screen);
-        if (point != null) {
-          return point;
-        }
-      }
-    }
-    return null;
+    return find(controlPoint.getImages(), controlPoint.getFindRectangle(), isRefresh, count);
+
+//    for (int i = 0; i < count; i++) {
+//      if (count > 1){
+//        robot.delay(2000);
+//      }
+//      if (isRefresh){
+//        refreshScreen();
+//      }
+//      if (screen == null){
+//        return null;
+//      }
+//      for (BufferedImage image : controlPoint.getImages()) {
+//        Point point = findImage(image, screen);
+//        if (point != null) {
+//          return point;
+//        }
+//      }
+//    }
+//    return null;
   }
 
   public Point find(List<BufferedImage> images, Rectangle rectangle, boolean isRefresh, int count){

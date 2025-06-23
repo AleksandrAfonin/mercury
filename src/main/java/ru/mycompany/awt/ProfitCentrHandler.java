@@ -377,7 +377,7 @@ public class ProfitCentrHandler implements Handler {
     nameImage = nameImage.substring(nameImage.lastIndexOf(" ") + 1);
 
     List<WebElement> webElements = WEB_DRIVER.findElements(By.xpath("//*/tr/td[@colspan='2']/div[@class='out-capcha']/label[@class='out-capcha-lab']"));
-    ru.mycompany.examples.SQLiteProvider sqLiteProvider = ru.mycompany.examples.SQLiteProvider.getInstance();
+    SQLiteProvider sqLiteProvider = SQLiteProvider.getInstance();
 
     for (int i = 0; i < 6; i++) {
       String content = webElements.get(i).getAttribute("style");
