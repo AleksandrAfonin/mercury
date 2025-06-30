@@ -6,33 +6,33 @@ import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.interactions.Actions;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class SeoFastHandlerRobot implements Handler {
     private final String sitename;
-    private String browser;
+    private final String browser;
     private final WebDriver WEB_DRIVER;
-    private final String E_MAIL;    // alsupp@yandex.ru
-    private final String PASSWORD;  // 19b650660b
+    private String E_MAIL;    // alsupp@yandex.ru
+    private String PASSWORD;  // 19b650660b
     private final Actions ACTIONS;
     private final String URL;
     private final Processing processing;
     private final Rectangle header;
 
-    private final List<BufferedImage> email;
     private final ControlPoint enterControlPoint;
-    private final List<BufferedImage> visits;
-    private final List<BufferedImage> roundLinc;
-    private final List<BufferedImage> id;
-    private final List<BufferedImage> to_visit;
-    private final List<BufferedImage> closeActivePage;
-    private final List<BufferedImage> closePassivePage;
-    private final List<BufferedImage> completed;
+    private final ControlPoint earnControlPoint;
+    private final ControlPoint toVisitsControlPoint;
+    private final ControlPoint hereVisitsControlPoint;
+    private final ControlPoint visitsHereControlPoint;
+    private final ControlPoint roundLincControlPoint;
+    private final ControlPoint idControlPoint;
+    private final ControlPoint visitControlPoint;
+    private final ControlPoint filedControlPoint;
+    private final ControlPoint closePassivePageControlPoint;
+    private final ControlPoint closeActivePageControlPoint;
+    private final ControlPoint completedControlPoint;
+    private final ControlPoint confirmCompletedControlPoint;
 
     public SeoFastHandlerRobot(WebDriver webDriver, User user) throws AWTException {
         this.sitename = "seofast";
@@ -41,24 +41,49 @@ public class SeoFastHandlerRobot implements Handler {
         this.processing = new Processing(webDriver, ACTIONS);
         this.E_MAIL = user.getLogin();
         this.PASSWORD = user.getPassword();
-        this.header = new Rectangle(270, 2, 900, 30);
-        this.URL = "https://seo-fast.ru/login";
-
+        this.header = new Rectangle(390, 15, 80, 13);
+        this.URL = SQLiteProvider.getInstance().getUrlSite(sitename);
         browser = processing.getBrowserName(webDriver);
 
-        this.email = SQLiteProvider.getInstance().getSprites(sitename, browser, "e-mail");
-        this.enterControlPoint = new ControlPoint(sitename, browser, "enter", 15, 17, new Rectangle(600, 300, 120, 70));
+        // Контрольна точка входа в акаунт
+        this.enterControlPoint = new ControlPoint(sitename, browser, "enter", 15, 17, new Rectangle(520, 280, 280, 120));
         this.enterControlPoint.addRectangleClick("_", new Rectangle(-97, -4, 250, 26));
         this.enterControlPoint.addRectangleClick("e-mail", new Rectangle(-115, -78, 280, 18));
         this.enterControlPoint.addRectangleClick("password", new Rectangle(-115, -42, 280, 18));
-        this.visits = SQLiteProvider.getInstance().getSprites(sitename, browser,"visits");
-        this.roundLinc = SQLiteProvider.getInstance().getSprites(sitename, browser,"round-linc");
-        this.id = SQLiteProvider.getInstance().getSprites(sitename, browser,"id");
-        this.to_visit = SQLiteProvider.getInstance().getSprites(sitename, browser,"to-visit");
-        this.closeActivePage = SQLiteProvider.getInstance().getSprites(sitename, browser,"close-active-page");
-        this.closePassivePage = SQLiteProvider.getInstance().getSprites(sitename, browser,"close-passive-page");
-        this.completed = SQLiteProvider.getInstance().getSprites(sitename, browser,"completed");
+        // Контрольна точка "заработать"
+        this.earnControlPoint = new ControlPoint(sitename, browser, "earn", 9, 10, new Rectangle(40, 300, 300, 300));
+        // Контрольная точка перехода на оплачиваемые посещения
+        this.toVisitsControlPoint = new ControlPoint(sitename, browser, "toVisits", 19, 10, new Rectangle(100, 150, 250, 200));
+        this.toVisitsControlPoint.addRectangleClick("click", new Rectangle(-104, 2, 170, 6));
+        // Контрольная точка раздела оплачиваемых посещений
+        this.hereVisitsControlPoint = new ControlPoint(sitename, browser, "hereVisits", 11, 10, new Rectangle(500, 270, 260, 490));
+        // Контрольная точка присутствия ссылок
+        this.visitsHereControlPoint = new ControlPoint(sitename, browser, "visitsHere", 11, 11, new Rectangle(490, 250, 260, 510));
+        // Контрольная точка ссылки
+        this.roundLincControlPoint = new ControlPoint(sitename, browser, "round-linc", 32, 32, null);
+        this.roundLincControlPoint.addRectangleClick("clickLinc", new Rectangle(60, 0, 6, 13));
+        // Контрольная точка айдишника при ссылке
+        this.idControlPoint = new ControlPoint(sitename, browser, "id", 15, 10, null);
+        // Контрольная точка подтверждения перехода по ссылке
+        this.visitControlPoint = new ControlPoint(sitename, browser, "to-visit", 13, 14, null);
+        this.visitControlPoint.addRectangleClick("click", new Rectangle(0, -5, 256, 27));
+        // Контрольная точка битой ссылки
+        this.filedControlPoint = new ControlPoint(sitename, browser, "filed", 13, 14, null);
+        // Крестик закрытия пассивной страницы
+        this.closePassivePageControlPoint = new ControlPoint(sitename, browser, "close-passive-page", 8, 8, new Rectangle(150, 0, 170, 40));
+        // Крестик закрытия активной страницы
+        this.closeActivePageControlPoint = new ControlPoint(sitename, browser, "close-active-page", 8, 8, new Rectangle(270, 2, 900, 30));
+        this.closeActivePageControlPoint.addRectangleClick("click", new Rectangle(0, 0, 8, 8));
+        // Подтвеждение завершения просмотра
+        this.completedControlPoint = new ControlPoint(sitename, browser, "completed", 12, 9, new Rectangle(270, 2, 900, 30));
+        // Подтверждение получения оплаты или "чего то не так"
+        this.confirmCompletedControlPoint = new ControlPoint(sitename, browser, "confirmCompleted", 14, 12, null);
 
+    }
+
+    public void setUser(User user){
+        this.E_MAIL = user.getLogin();
+        this.PASSWORD = user.getPassword();
     }
 
     @Override
@@ -71,118 +96,176 @@ public class SeoFastHandlerRobot implements Handler {
             WEB_DRIVER.quit();
             return;
         }
-        pause(10000, 0);
+        pause(5000, 0);
         if (!authorization()) {
             WEB_DRIVER.quit();
             return;
         }
-        processing.mouseScrollDown(3);
-        pause(2000, 1000);
-        Point point = processing.find(visits, true, 5);
-        if (point == null) {
+        pause(5000, 0);
+        if (!performingClicksOnLinks(goVisitsPage())) {
             WEB_DRIVER.quit();
             return;
         }
-        processing.mouseLeftClick(point, 80, 10);
-        pause(15000, 5000);
 
-        performingClicks();
-        WEB_DRIVER.get(WEB_DRIVER.getCurrentUrl());
-        pause(15000, 5000);
-        performingClicks();
+
+//        WEB_DRIVER.get(WEB_DRIVER.getCurrentUrl());
+//        pause(15000, 5000);
+//        performingClicks();
 //===============================
         pause(5000, 0);
         WEB_DRIVER.quit();
     }
 
+    private Rectangle goVisitsPage(){
+        Point point = processing.find(earnControlPoint, true, 10);
+        if (point == null) {
+            processing.saveScreenShot(earnControlPoint.getFullName());
+            System.out.println("Earn control point is not found");
+            return null;
+        }
+        System.out.println("Earn control point is Ok");
+        processing.scrollPageDown(point.y - 100);
+        point = processing.find(toVisitsControlPoint, true, 10);
+        if (point == null) {
+            processing.saveScreenShot(toVisitsControlPoint.getFullName());
+            System.out.println("toVisits control point is not found");
+            return null;
+        }
+        processing.mouseLeftClick(point, toVisitsControlPoint.getRectangleClick("click"));
+        System.out.println("toVisits control point is Ok");
+        point = processing.find(hereVisitsControlPoint, true, 10);
+        if (point == null) {
+            processing.saveScreenShot(hereVisitsControlPoint.getFullName());
+            System.out.println("hereVisits control point is not found");
+            return null;
+        }
+        processing.scrollPageDown(point.y - 100);
+        System.out.println("hereVisits control point is Ok");
+        point = processing.find(visitsHereControlPoint, true, 10);
+        if (point == null) {
+            processing.saveScreenShot(visitsHereControlPoint.getFullName());
+            System.out.println("visitsHere control point is not found");
+            return null;
+        }
+        processing.scrollPageDown(point.y - 100);
+        point.y = 100;
+        System.out.println("visitsHere control point is Ok");
+        return new Rectangle(point.x - 316, point.y + 10, 45, 75);
+    }
 
-    private void performingClicks() {
-        boolean isFinish = false;
-        Point point = new Point();
+    private boolean performingClicksOnLinks(Rectangle startField) {
+        if (startField == null){
+            return false;
+        }
+        Rectangle findField = new Rectangle(startField);
+        Rectangle findId = new Rectangle(0, 0, 33, 30);
+        Rectangle area = new Rectangle(0, 0, 460, 53);
+        boolean isFirstLink = true;
         while (true) {
-            point.x = 550;
-            point.y = 400;
-            processing.mouseMove(point);
-            processing.mouseScrollDown(6);
-            pause(1000, 1000);
-            List<Point> points = getPointsList();
-            if (points.isEmpty()) {
-                if (isFinish) {
-                    return;
+            while (findField.y < 768 - findField.height) {
+                roundLincControlPoint.setFindRectangle(findField);
+                Point pointRL = processing.findNotCount(roundLincControlPoint, true);
+                if (pointRL == null) {
+                    if (isFirstLink) {
+                        processing.saveScreenShot(roundLincControlPoint.getFullName());
+                        System.out.println("round-linc control point is not found");
+                        return false; // Нет ничего
+                    }
+                    return true; // Последующих ссылок нет
                 }
-                isFinish = true;
-                continue;
-            }
-            isFinish = false;
-            for (Point p : points) {
-                p.x = p.x + 65;
-                processing.mouseLeftClick(p, 8, 8);
-                if (!checkVisit(p)) {
-                    continue;
+                findId.x = pointRL.x + 31;
+                findId.y = pointRL.y + 11;
+                idControlPoint.setFindRectangle(findId);
+                Point pointId = processing.findNotCount(idControlPoint, true);
+                if (pointId == null) {
+                    if (isFirstLink) {
+                        processing.saveScreenShot(idControlPoint.getFullName());
+                        System.out.println("id control point is not found");
+                        return false; // Нет ничего
+                    }
+                    findField.y = findField.y + 55;
+                    continue; // Айдишника при ссылке нет
                 }
-                processing.find(completed, header, true, 90);
-                closeAllTabs();
-                processing.refreshScreen();
+                isFirstLink = false;
+                processing.mouseLeftClick(pointRL, roundLincControlPoint.getRectangleClick("clickLinc"));
+                area.x = pointRL.x + 60;
+                area.y = pointRL.y - 12;
+                visitControlPoint.setFindRectangle(area);
+                filedControlPoint.setFindRectangle(area);
+                int result = verifyGo(60);
+                if (result == 0) {
+                    return false;
+                }
+                if (result == 1 || result == 2) {
+                    Point point = processing.find(completedControlPoint, true, 8);
+                    if (point == null){
+                        processing.mouseRandomMove(header);
+                        point = processing.find(completedControlPoint, true, 90);
+                        if (point == null) {
+                            processing.saveScreenShot(completedControlPoint.getFullName());
+                            System.out.println("completed control point is not found");
+                        }else{
+                            System.out.println("completed control point is Ok");
+                        }
+                    }
+                    Point pointClose = processing.find(closeActivePageControlPoint, true, 2);
+                    if (pointClose == null) {
+                        processing.saveScreenShot(closeActivePageControlPoint.getFullName());
+                        System.out.println("closeActivePage control point is not found");
+                        return false;
+                    }
+                    processing.mouseLeftClick(pointClose, closeActivePageControlPoint.getRectangleClick("click"));
+                    confirmCompletedControlPoint.setFindRectangle(area);
+                    point = processing.find(confirmCompletedControlPoint, true, 40);
+                    if (point == null) {
+                        processing.saveScreenShot(confirmCompletedControlPoint.getFullName());
+                        System.out.println("confirmCompleted control point is not found");
+                    }else{
+                        System.out.println("confirmCompleted control point is Ok");
+                    }
+                }
+                findField.y = findField.y + 55;
             }
+            processing.scrollPageDown(findField.y - startField.y);
+            findField.y = startField.y;
         }
     }
 
-    private boolean checkVisit(Point p) {
-        Rectangle rectangle = new Rectangle(p.x, p.y, 250, 30);
-        for (int i = 0; i < 10; i++) {
+    private int verifyGo(int count) {
+        Point point;
+        for (int i = 0; i <= count; i++) {
             pause(2000, 0);
-            Point point = processing.find(to_visit, rectangle, true, 1);
+            point = processing.findNotCount(closePassivePageControlPoint, true);
             if (point != null) {
-                pause(1000, 1000);
-                processing.mouseMove(point);
-                processing.mouseLeftClick(point, 200, 10);
-                pause(10000, 0);
-                return true;
+                System.out.println("closePassivePage Ok");
+                return 1; // Нашли пассивную страницу
+            } else if (i == count) {
+                processing.saveScreenShot(closePassivePageControlPoint.getFullName());
+                System.out.println("closePassivePage control point is not found");
             }
-            point = processing.find(closeActivePage, header, true, 1);
+            point = processing.findNotCount(visitControlPoint, true);
             if (point != null) {
-                return true;
+                processing.mouseLeftClick(point, visitControlPoint.getRectangleClick("click"));
+                System.out.println("visit Ok");
+                return 2; // Нашли подтверждение перехода и подтвердили
+            } else if (i == count) {
+                processing.saveScreenShot(visitControlPoint.getFullName());
+                System.out.println("visit control point is not found");
+            }
+            point = processing.findNotCount(filedControlPoint, true);
+            if (point != null) {
+                System.out.println("filed Ok");
+                return 3; // Нашли ломанную ссылку
+            } else if (i == count) {
+                processing.saveScreenShot(filedControlPoint.getFullName());
+                System.out.println("filed control point is not found");
             }
         }
-        return false;
+        return 0; // Ничего не нашли
     }
 
-    private List<Point> getPointsList() {
-        List<Point> points = new ArrayList<>();
-        int yPoint = processing.getFullScreen().height;
-        Rectangle field = new Rectangle(300, 0, 100, yPoint);
-        while (true) {
-            Point point = processing.find(roundLinc, field, true, 1);
-            if (point == null) {
-                break;
-            }
-            Rectangle rectangle = new Rectangle(point.x, point.y, 100, 32);
-            Point pointId = processing.find(id, rectangle, true, 1);
-            if (pointId == null) {
-                field.y = point.y + 10;
-                field.height = yPoint - field.y;
-                continue;
-            }
-            points.add(point);
-            field.y = point.y + 10;
-            field.height = yPoint - field.y;
-        }
-        return points;
-    }
-
-    private void closeAllTabs() {
-        while (true) {
-            Point point = processing.find(closeActivePage, header, true, 2);
-            if (point == null) {
-                return;
-            }
-            processing.mouseLeftClick(point, 7, 7);
-            pause(4000, 2000);
-        }
-    }
-// TODO in processing
     private boolean authorization() {
-        Point point = processing.find(enterControlPoint, true, 5);
+        Point point = processing.find(enterControlPoint, true, 30);
         if (point == null) {
             processing.saveScreenShot(enterControlPoint.getFullName());
             System.out.println("Enter control point is not found");
@@ -191,20 +274,19 @@ public class SeoFastHandlerRobot implements Handler {
         Rectangle eMailRectangle = enterControlPoint.getRectangleClick("e-mail");
         processing.mouseLeftClick(point, eMailRectangle);
         processing.sendKey(E_MAIL);
-        pause(500, 500);
+        pause(700, 100);
         Rectangle passwordRectangle = enterControlPoint.getRectangleClick("password");
         processing.mouseLeftClick(point, passwordRectangle);
         processing.sendKey(PASSWORD);
-        pause(500, 500);
+        pause(700, 100);
         Rectangle enterRectangle = enterControlPoint.getRectangleClick("_");
         processing.mouseLeftClick(point, enterRectangle);
-        pause(5000, 5000);
+        pause(5000, 500);
         return true;
     }
 
     private boolean start() {
         try {
-            WEB_DRIVER.manage().window().maximize();
             WEB_DRIVER.get(URL);
             System.out.println(WEB_DRIVER.getTitle() + " Стартовая страница загружена");
             return true;

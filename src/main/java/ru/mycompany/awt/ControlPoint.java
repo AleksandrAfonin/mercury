@@ -11,7 +11,7 @@ public class ControlPoint {
     private final String nameControlPoint;
     private final int widthSprite;
     private final int heightSprite;
-    private final Rectangle findRectangle;
+    private Rectangle findRectangle;
     private final Map<String, Rectangle> rectanglesMap;
     private final java.util.List<BufferedImage> sprites;
 
@@ -35,6 +35,10 @@ public class ControlPoint {
         this.findRectangle = findRectangle;
         this.rectanglesMap = new HashMap<>();
         this.sprites = SQLiteProvider.getInstance().getSprites(siteName, browser, nameControlPoint);
+    }
+
+    public void setFindRectangle(Rectangle newFindRectangle){
+        this.findRectangle = newFindRectangle;
     }
 
     public int getWidthSprite(){

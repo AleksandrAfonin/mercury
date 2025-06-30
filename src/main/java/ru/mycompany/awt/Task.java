@@ -30,7 +30,7 @@ public class Task implements Runnable {
         continue;
       }
       WebDriver webDriver = getWebDriver(user);// Получаем драйвер
-      webDriver.manage().window().maximize();// Устанавливаем размеры окна браузера
+      //webDriver.manage().window().maximize();// Устанавливаем размеры окна браузера
       try {
         getHandler(webDriver, user).run();
         //setNextTime(user);
@@ -56,18 +56,20 @@ public class Task implements Runnable {
       case CHROME:
         if (chromeOptions == null) {
           chromeOptions = new ChromeOptions();
+          chromeOptions.addArguments("--window-size=1300,768");// size browser
+          chromeOptions.addArguments("--window-position=0,0");// Позиционирование браузера
           //edgeOptions.addArguments("force-device-scale-factor=0.7");// Установка масштаба контента браузера
           chromeOptions.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});// Убрать служебную надпись
-          //edgeOptions.addArguments("--window-position=0,0");// Позиционирование браузера
           chromeOptions.setPageLoadStrategy(PageLoadStrategy.NONE);// Не ждем полной загрузки страницы
         }
         return new ChromeDriver(chromeOptions);
       case EDGE:
         if (edgeOptions == null) {
           edgeOptions = new EdgeOptions();
+          edgeOptions.addArguments("--window-size=1300,768");// size browser
+          edgeOptions.addArguments("--window-position=0,0");// Позиционирование браузера
           //edgeOptions.addArguments("force-device-scale-factor=0.7");// Установка масштаба контента браузера
           edgeOptions.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});// Убрать служебную надпись
-          //edgeOptions.addArguments("--window-position=0,0");// Позиционирование браузера
           edgeOptions.setPageLoadStrategy(PageLoadStrategy.NONE);// Не ждем полной загрузки страницы
         }
         return new EdgeDriver(edgeOptions);

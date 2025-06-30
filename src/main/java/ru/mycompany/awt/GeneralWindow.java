@@ -89,7 +89,7 @@ public class GeneralWindow extends Frame {
         imageLabel.setLocation(300, 150);
 
         choiceImage = new Choice();
-        choiceImage.setSize(200, 1);
+        choiceImage.setSize(300, 1);
         choiceImage.setLocation(300, 170);
         choiceImage.addItem("");
         File pathImages = new File(new File(".", "image"), "im");

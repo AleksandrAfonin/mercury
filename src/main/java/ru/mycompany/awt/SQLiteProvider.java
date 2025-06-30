@@ -1,7 +1,6 @@
 package ru.mycompany.awt;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -18,7 +17,7 @@ public class SQLiteProvider {
     private String GET_NAMES_SITES = "SELECT * FROM sites ORDER BY sitename;";
     private PreparedStatement getNamesSitesStatement;
     private final String GET_ACCOUNTS_LIST = """
-          SELECT accounts.id, login, password, browser, handler, nexttime, intervalminutes FROM accounts, sites 
+          SELECT accounts.id, login, password, browser, accounts.handler, nexttime, intervalminutes FROM accounts, sites 
           WHERE accounts.sitename = sites.id 
           AND sites.sitename = ? AND accounts.isenable = 'true';""";
     private PreparedStatement getAccountLislStatement;
@@ -34,6 +33,8 @@ public class SQLiteProvider {
     private PreparedStatement getSpritesStatement;
     private final String SAVE_PIC = "INSERT INTO sprites (sitename, browser, name, data) VALUES (?, ?, ?, ?);";
     private PreparedStatement savePicStatement;
+    private final String GET_URL_SITE = "SELECT url FROM sites WHERE sitename = ?;";
+    private PreparedStatement getUrlSite;
 
     private SQLiteProvider() {
     }
@@ -57,9 +58,24 @@ public class SQLiteProvider {
             setNextTimeStatement = connection.prepareStatement(SET_NEXT_TIME);
             getSpritesStatement = connection.prepareStatement(GET_SPRITES);
             savePicStatement = connection.prepareStatement(SAVE_PIC);
+            getUrlSite = connection.prepareStatement(GET_URL_SITE);
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public String getUrlSite(String sitename){
+        try {
+            getUrlSite.setString(1, sitename);
+            ResultSet resultSet = getUrlSite.executeQuery();
+            if (resultSet.next()){
+                return resultSet.getString("url");
+            }
+            return "";
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "";
         }
     }
 
