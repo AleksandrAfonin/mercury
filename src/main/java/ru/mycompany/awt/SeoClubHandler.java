@@ -2,6 +2,7 @@ package ru.mycompany.awt;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
+
 import java.awt.*;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -9,12 +10,13 @@ import java.util.Date;
 import java.util.List;
 
 public class SeoClubHandler implements Handler {
-  private final WebDriver WEB_DRIVER;
-  private final String E_MAIL;    // alsupp@yandex.ru
-  private final String PASSWORD;  // 19b650660b
-  private final Actions ACTIONS;
+  private String sitename;
+  private String browser;
+  private WebDriver WEB_DRIVER;
+  private User user;
   private final String URL;
-  private final Processing processing;
+  private Processing processing;
+
   private final String AUTHORISATION = "//*/div[@class='titles'][text()[contains(.,'Вход в аккаунт')]]";// Контроль страницы авторизации
   private final String WELL_COME = "//*/span[@id='mnu_title1']";// Контроль рабочей страницы
   private final String CLOSE_MESSAGE = "//*/div[@class='mail-users']/span[@class='closed']";// Закрыть сообщение
@@ -38,20 +40,29 @@ public class SeoClubHandler implements Handler {
   private final String TABLE_TRANSITION = "//*/table[@class='work-serf']/tbody/tr/td[2]/div/a";
 
 
-  public SeoClubHandler(WebDriver webDriver, User user) throws AWTException {
+  public SeoClubHandler() throws AWTException {
+    this.sitename = "seoclub";
+    this.URL = SQLiteProvider.getInstance().getUrlSite(sitename);
+    this.browser = SQLiteProvider.getInstance().getBrowser(sitename);
+  }
+
+  @Override
+  public WebDriver getWebDriver() {
+    return WEB_DRIVER;
+  }
+
+  @Override
+  public void setProperty(WebDriver webDriver, Processing processing, User user) {
     this.WEB_DRIVER = webDriver;
-    this.ACTIONS = new Actions(webDriver, Duration.ofSeconds(1));
-    this.processing = new Processing(webDriver, ACTIONS);
-    this.E_MAIL = user.getLogin();
-    this.PASSWORD = user.getPassword();
-    this.URL = "https://seoclub.su/login";
+    this.processing = processing;
+    this.user = user;
   }
 
   @Override
   public void run() throws WebDriverException {
     System.out.println();
     Date date = new Date(System.currentTimeMillis());
-    System.out.println(date + "   Account: " + E_MAIL);
+    System.out.println(date + "   Account: " + user.getLogin());
 
     if (!start()) {
       WEB_DRIVER.quit();
@@ -166,7 +177,7 @@ public class SeoClubHandler implements Handler {
       return false;
     }
     try {
-      ACTIONS.click(webElement).perform();
+      processing.clickElement(webElement);
       pause(2000);
       WebElement checkPage = processing.getElementByXpathWithCount(SURFING_CONTROL, 30);
       if (checkPage == null){
@@ -195,13 +206,13 @@ public class SeoClubHandler implements Handler {
         if (el == null){
           continue;
         }
-        ACTIONS.click(el).perform();
+        processing.clickElement(el);
         try{
           el = processing.getElementByXpathWithCount(element, CLICK_VIEW, 30);
           if (el == null){
             continue;
           }
-          ACTIONS.click(el).perform();
+          processing.clickElement(el);
           pause(5000);
         }catch (Exception e){
           continue;
@@ -235,7 +246,7 @@ public class SeoClubHandler implements Handler {
     pause(200);
     javascriptExecutor.executeScript("arguments[0].setAttribute('wfd-id', 'id0');", webElement);
     webElement = processing.getElementByXpathWithCount(FORM_BUTTON, 5);
-    ACTIONS.click(webElement).perform();
+    processing.clickElement(webElement);
     pause(5000);
     return true;
   }
@@ -250,7 +261,7 @@ public class SeoClubHandler implements Handler {
       return false;
     }
     try {
-      ACTIONS.click(webElement).perform();
+      processing.clickElement(webElement);
       pause(2000);
       WebElement checkPage = processing.getElementByXpathWithCount(TRANSITION_CONTROL, 30);
       if (checkPage == null){
@@ -264,7 +275,7 @@ public class SeoClubHandler implements Handler {
         if (element.getAttribute("target").equals("_blank")){
           continue;
         }
-        ACTIONS.click(element).perform();
+        processing.clickElement(element);
         pause(4000);
         if (processing.isMore1TabsWithCount(30)){
           processing.waitTimeOnTitlePage("Просмотр засчитан!", 200);
@@ -307,7 +318,7 @@ public class SeoClubHandler implements Handler {
   private void closeMailMessage(){
     WebElement webElement = processing.getElementByXpathWithCount(CLOSE_MESSAGE, 5);
     if (webElement != null) {
-      ACTIONS.click(webElement).perform();
+      processing.clickElement(webElement);
       pause(5000);
     }
   }
@@ -317,15 +328,15 @@ public class SeoClubHandler implements Handler {
     if (webElement == null) {
       return false;
     }
-    ACTIONS.sendKeys(webElement, E_MAIL).perform();
+    processing.sendKeys(webElement, user.getLogin());
     webElement = processing.getElementByXpathWithCount(INPUT_PASSWORD, 30);
     if (webElement == null) {
       return false;
     }
-    ACTIONS.sendKeys(webElement, PASSWORD).perform();
+    processing.sendKeys(webElement, user.getPassword());
     if (resolveCaptcha()) {
       webElement = processing.getElementByXpathWithCount(ENTER_BUTTON, 30);
-      ACTIONS.click(webElement).perform();
+      processing.clickElement(webElement);
       pause(5000);
       return true;
     }
@@ -345,7 +356,7 @@ public class SeoClubHandler implements Handler {
     for (WebElement element : webElements){
       String content = element.getAttribute("style");
       if (sqLiteProvider.checkImageInSeoClubTable(nameImage, content)) {
-        ACTIONS.click(element).perform();
+        processing.clickElement(element);
         isSuccess = true;
         pause(500);
       }

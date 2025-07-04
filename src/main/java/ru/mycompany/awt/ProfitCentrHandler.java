@@ -1,32 +1,28 @@
 package ru.mycompany.awt;
 
 import org.openqa.selenium.*;
-import org.openqa.selenium.interactions.Actions;
-
-import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 
 public class ProfitCentrHandler implements Handler {
-  private final WebDriver WEB_DRIVER;
-  private final String E_MAIL;    // alsupp@yandex.ru
-  private final String PASSWORD;  // 19b650660b
-  private final Actions ACTIONS;
+  private final String sitename;
+  private final String browser;
+  private WebDriver WEB_DRIVER;
+  private User user;
+  private Processing processing;
   private final String URL;
 
-  public ProfitCentrHandler(WebDriver webDriver, User user) {
-    this.WEB_DRIVER = webDriver;
-    this.E_MAIL = user.getLogin();
-    this.PASSWORD = user.getPassword();
-    this.ACTIONS = new Actions(webDriver, Duration.ofSeconds(1));
-    this.URL = "https://profitcentr.com/login";
+  public ProfitCentrHandler() {
+    this.sitename = "profitcentr";
+    this.URL = SQLiteProvider.getInstance().getUrlSite(sitename);
+    this.browser = SQLiteProvider.getInstance().getBrowser(sitename);
   }
 
   @Override
   public void run() throws WebDriverException {
     System.out.println();
     Date date = new Date(System.currentTimeMillis());
-    System.out.println(date + "   Account: " + E_MAIL);
+    System.out.println(date + "   Account: " + user.getLogin());
 
     if (!start()) {
       WEB_DRIVER.quit();
@@ -65,6 +61,18 @@ public class ProfitCentrHandler implements Handler {
 
     pause(5000);
     WEB_DRIVER.quit();
+  }
+
+  @Override
+  public WebDriver getWebDriver() {
+    return WEB_DRIVER;
+  }
+
+  @Override
+  public void setProperty(WebDriver webDriver, Processing processing, User user) {
+    this.WEB_DRIVER = webDriver;
+    this.processing = processing;
+    this.user = user;
   }
 
   private boolean closeAllTabs() {
@@ -114,7 +122,7 @@ public class ProfitCentrHandler implements Handler {
       return false;
     }
     try {
-      ACTIONS.click(webElement).perform();
+      processing.clickElement(webElement);
       pause(1000);
       String[] texts = new String[]{"Посещение сайтов"};
       int pageNum = checkPages(texts, 30);
@@ -126,7 +134,7 @@ public class ProfitCentrHandler implements Handler {
         return true;
       }
       for (WebElement element : dataElements){
-        ACTIONS.click(element).perform();
+        processing.clickElement(element);
         pause(3000);
         if (isMore1TabsWithCount(5)){
           waitTime("Просмотр засчитан!", 300);
@@ -149,7 +157,7 @@ public class ProfitCentrHandler implements Handler {
       return false;
     }
     try {
-      ACTIONS.click(webElement).perform();
+      processing.clickElement(webElement);
       pause(500);
       String[] texts = new String[]{"Серфинг сайтов"};
       int pageNum = checkPages(texts, 30);
@@ -167,7 +175,7 @@ public class ProfitCentrHandler implements Handler {
         }
         WebElement parent = element.findElement(By.xpath(".."));
         pause(500);
-        ACTIONS.click(element).perform();
+        processing.clickElement(element);
         pause(4000);
         try{
           WebElement child = parent.findElement(By.tagName("a"));
@@ -175,7 +183,7 @@ public class ProfitCentrHandler implements Handler {
           if (!content.equals("Приступить к просмотру")){
             continue;
           }
-          ACTIONS.click(child).perform();
+          processing.clickElement(child);
           pause(4000);
         }catch (Exception e){
           continue;
@@ -203,7 +211,7 @@ public class ProfitCentrHandler implements Handler {
       return false;
     }
     try {
-      ACTIONS.click(webElement).perform();
+      processing.clickElement(webElement);
       pause(1000);
       String[] texts = new String[]{"Пройти проверку"};
       int pageNum = checkPages(texts, 30);
@@ -214,7 +222,7 @@ public class ProfitCentrHandler implements Handler {
         return false;
       }
       webElement = getElementByXpathWithCount("//*/button/span[@class='btn green']", 30);
-      ACTIONS.click(webElement).perform();
+      processing.clickElement(webElement);
       pause(4000);
       int count = checkPages(new String[]{"Просмотр видео"}, 30);
       if (count != 0){
@@ -230,14 +238,14 @@ public class ProfitCentrHandler implements Handler {
         }
         WebElement parent = element.findElement(By.xpath(".."));
         pause(500);
-        ACTIONS.click(element).perform();
+        processing.clickElement(element);
         pause(4000);
         try {
           WebElement child = parent.findElement(By.xpath("./div/span"));
           if (!child.getText().equals("Приступить к просмотру")) {
             continue;
           }
-          ACTIONS.click(child).perform();
+          processing.clickElement(child);
           pause(4000);
         }catch (Exception e){
           continue;
@@ -271,7 +279,7 @@ public class ProfitCentrHandler implements Handler {
     javascriptExecutor.executeScript("arguments[0].setAttribute('wfd-id', 'id0');", webElement);
     pause(1000);
     webElement = getElementByXpathWithCount("//*/form/button", 5);
-    ACTIONS.click(webElement).perform();
+    processing.clickElement(webElement);
     pause(5000);
     return true;
   }
@@ -382,7 +390,7 @@ public class ProfitCentrHandler implements Handler {
     for (int i = 0; i < 6; i++) {
       String content = webElements.get(i).getAttribute("style");
       if (sqLiteProvider.checkImageInProfitCentrTable(nameImage, content)) {
-        ACTIONS.click(webElements.get(i)).perform();
+        processing.clickElement(webElements.get(i));
         isSuccess = true;
         pause(500);
       }
@@ -405,7 +413,7 @@ public class ProfitCentrHandler implements Handler {
     for (int i = 0; i < 6; i++) {
       String content = webElements.get(i).getAttribute("style");
       if (sqLiteProvider.checkImageInProfitCentrTable(nameImage, content)) {
-        ACTIONS.click(webElements.get(i)).perform();
+        processing.clickElement(webElements.get(i));
         isSuccess = true;
         pause(500);
       }
@@ -424,15 +432,15 @@ public class ProfitCentrHandler implements Handler {
     if (webElement == null) {
       return false;
     }
-    ACTIONS.sendKeys(webElement, E_MAIL).perform();
+    processing.sendKeys(webElement, user.getLogin());
     webElement = getElementByXpathWithCount("//*/input[@class='login_vh'][@name='password']", 30);
     if (webElement == null) {
       return false;
     }
-    ACTIONS.sendKeys(webElement, PASSWORD).perform();
+    processing.sendKeys(webElement, user.getPassword());
     if (resolveCaptcha()) {
       webElement = getElementByXpathWithCount("//*/span[@class='btn_big_green']", 30);
-      ACTIONS.click(webElement).perform();
+      processing.clickElement(webElement);
       pause(5000);
       return true;
     }

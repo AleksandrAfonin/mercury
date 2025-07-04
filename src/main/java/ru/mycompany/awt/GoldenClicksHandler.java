@@ -3,12 +3,9 @@ package ru.mycompany.awt;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.time.Duration;
 import java.util.Date;
 import java.util.List;
@@ -16,12 +13,11 @@ import java.util.List;
 public class GoldenClicksHandler implements Handler {
   private final String sitename;
   private String browser;
-  private final WebDriver WEB_DRIVER;
-  private final String E_MAIL;    // alsupp@yandex.ru
-  private final String PASSWORD;  // 19b650660b
-  private final Actions ACTIONS;
+  private WebDriver WEB_DRIVER;
+  private User user;
   private final String URL;
-  private final Processing processing;
+  private Processing processing;
+
   private final String SURFING_SITES = "//*/div[@id='mnu_tblock1']/a[text()[contains(.,'Сёрфинг сайтов')]]";
   private final String AUTHORISATION = "//*/div[@class='titles'][text()[contains(.,'Авторизация')]]";// Контроль страницы авторизации
   private final String WELL_COME = "//*/span[@id='mnu_title1']";// Контроль рабочей страницы
@@ -44,24 +40,30 @@ public class GoldenClicksHandler implements Handler {
   private final List<BufferedImage> ravno;
 
 
-  public GoldenClicksHandler(WebDriver webDriver, User user) throws AWTException {
+  public GoldenClicksHandler() {
     this.sitename = "goldenclicks";
-    this.WEB_DRIVER = webDriver;
-    this.ACTIONS = new Actions(webDriver, Duration.ofSeconds(1));
-    this.processing = new Processing(webDriver, ACTIONS);
-    this.E_MAIL = user.getLogin();
-    this.PASSWORD = user.getPassword();
-    this.URL = "https://golden-clicks.ru/login";
-
-    browser = processing.getBrowserName(webDriver);
+    this.URL = SQLiteProvider.getInstance().getUrlSite(sitename);
+    this.browser = SQLiteProvider.getInstance().getBrowser(sitename);
     this.ravno = SQLiteProvider.getInstance().getSprites(sitename, browser, "ravno");
+  }
+
+  @Override
+  public WebDriver getWebDriver() {
+    return WEB_DRIVER;
+  }
+
+  @Override
+  public void setProperty(WebDriver webDriver, Processing processing, User user) {
+    this.WEB_DRIVER = webDriver;
+    this.processing = processing;
+    this.user = user;
   }
 
   @Override
   public void run() throws WebDriverException {
     System.out.println();
     Date date = new Date(System.currentTimeMillis());
-    System.out.println(date + "   Account: " + E_MAIL);
+    System.out.println(date + "   Account: " + user.getLogin());
 
     if (!start()) {
       WEB_DRIVER.quit();
@@ -112,7 +114,7 @@ public class GoldenClicksHandler implements Handler {
       return false;
     }
     try {
-      ACTIONS.click(webElement).perform();
+      processing.clickElement(webElement);
       pause(2000);
       WebElement checkPage = processing.getElementByXpathWithCount(RUTUBE_CONTROL, 30);
       if (checkPage == null){
@@ -128,13 +130,13 @@ public class GoldenClicksHandler implements Handler {
         if (el == null){
           continue;
         }
-        ACTIONS.click(el).perform();
+        processing.clickElement(el);
         try{
           el = processing.getElementByXpathWithCount(element, CLICK_VIEW_RUTUBE, 30);
           if (el == null){
             continue;
           }
-          ACTIONS.click(el).perform();
+          processing.clickElement(el);
           pause(5000);
         }catch (Exception e){
           continue;
@@ -166,7 +168,7 @@ public class GoldenClicksHandler implements Handler {
       return false;
     }
     try {
-      ACTIONS.click(webElement).perform();
+      processing.clickElement(webElement);
       pause(2000);
       WebElement checkPage = processing.getElementByXpathWithCount(DINAMIC_LINK, 30);
       if (checkPage == null){
@@ -184,13 +186,13 @@ public class GoldenClicksHandler implements Handler {
         }
         WebElement parent = element.findElement(By.xpath(".."));
         pause(500);
-        ACTIONS.click(element).perform();
+        processing.clickElement(element);
         try{
           WebElement child = processing.getElementByXpathWithCount(parent, GET_VIEW, 30);
           if (child == null){
             continue;
           }
-          ACTIONS.click(child).perform();
+          processing.clickElement(child);
           pause(4000);
         }catch (Exception e){
           continue;
@@ -219,7 +221,7 @@ public class GoldenClicksHandler implements Handler {
     if (webElement == null){
       return false;
     }
-    ACTIONS.click(webElement).perform();
+    processing.clickElement(webElement);
     pause(5000);
     return true;
   }
@@ -246,7 +248,7 @@ public class GoldenClicksHandler implements Handler {
     }
     System.out.println("Переход на 'Переходы'");
     try {
-      ACTIONS.click(webElement).perform();
+      processing.clickElement(webElement);
       pause(2000);
       WebElement checkPage = processing.getElementByXpathWithCount("//*/td[@id='contentwrapper']/div[text()[contains(.,'Переходы')]]", 30);
       if (checkPage == null){
@@ -258,7 +260,7 @@ public class GoldenClicksHandler implements Handler {
       }
       processing.scrollPageDown(300);
       for (WebElement element : dataElements){
-        ACTIONS.click(element).perform();
+        processing.clickElement(element);
         pause(4000);
         if (processing.isMore1TabsWithCount(5)){
           processing.waitTimeOnTitlePage("Просмотр засчитан!", 200);
@@ -302,7 +304,7 @@ public class GoldenClicksHandler implements Handler {
   private void closeMailMessage(){
     WebElement webElement = processing.getElementByXpathWithCount(CLOSE_MESSAGE, 5);
     if (webElement != null) {
-      ACTIONS.click(webElement).perform();
+      processing.clickElement(webElement);
       pause(5000);
     }
   }
@@ -312,15 +314,15 @@ public class GoldenClicksHandler implements Handler {
     if (webElement == null) {
       return false;
     }
-    ACTIONS.sendKeys(webElement, E_MAIL).perform();
+    processing.sendKeys(webElement, user.getLogin());
     webElement = processing.getElementByXpathWithCount(INPUT_PASSWORD, 15);
     if (webElement == null) {
       return false;
     }
-    ACTIONS.sendKeys(webElement, PASSWORD).perform();
+    processing.sendKeys(webElement, user.getPassword());
     if (resolveCaptcha()) {
       webElement = processing.getElementByXpathWithCount(ENTER_BUTTON, 15);
-      ACTIONS.click(webElement).perform();
+      processing.clickElement(webElement);
       pause(5000);
       return true;
     }
@@ -336,7 +338,7 @@ public class GoldenClicksHandler implements Handler {
     if (webElement == null) {
       return false;
     }
-    ACTIONS.sendKeys(webElement, processing.resolveSarSeoCaptcha(point)).perform();
+    processing.sendKeys(webElement, processing.resolveSarSeoCaptcha(point));
     return true;
   }
 

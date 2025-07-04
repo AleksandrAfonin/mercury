@@ -1,6 +1,9 @@
 package ru.mycompany.awt;
 
+import org.openqa.selenium.WebDriver;
+
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -17,7 +20,7 @@ public class SQLiteProvider {
     private String GET_NAMES_SITES = "SELECT * FROM sites ORDER BY sitename;";
     private PreparedStatement getNamesSitesStatement;
     private final String GET_ACCOUNTS_LIST = """
-          SELECT accounts.id, login, password, browser, accounts.handler, nexttime, intervalminutes FROM accounts, sites 
+          SELECT accounts.id, login, password, nexttime, intervalminutes FROM accounts, sites 
           WHERE accounts.sitename = sites.id 
           AND sites.sitename = ? AND accounts.isenable = 'true';""";
     private PreparedStatement getAccountLislStatement;
@@ -34,7 +37,11 @@ public class SQLiteProvider {
     private final String SAVE_PIC = "INSERT INTO sprites (sitename, browser, name, data) VALUES (?, ?, ?, ?);";
     private PreparedStatement savePicStatement;
     private final String GET_URL_SITE = "SELECT url FROM sites WHERE sitename = ?;";
-    private PreparedStatement getUrlSite;
+    private PreparedStatement getUrlSiteStatement;
+    private final String GET_HANDLER = "SELECT handler FROM sites WHERE sitename = ?;";
+    private PreparedStatement getHandlerStatement;
+    private final String GET_BROWSER = "SELECT browser FROM sites WHERE sitename = ?;";
+    private PreparedStatement getBrowserStatement;
 
     private SQLiteProvider() {
     }
@@ -58,7 +65,9 @@ public class SQLiteProvider {
             setNextTimeStatement = connection.prepareStatement(SET_NEXT_TIME);
             getSpritesStatement = connection.prepareStatement(GET_SPRITES);
             savePicStatement = connection.prepareStatement(SAVE_PIC);
-            getUrlSite = connection.prepareStatement(GET_URL_SITE);
+            getUrlSiteStatement = connection.prepareStatement(GET_URL_SITE);
+            getHandlerStatement = connection.prepareStatement(GET_HANDLER);
+            getBrowserStatement = connection.prepareStatement(GET_BROWSER);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,8 +76,8 @@ public class SQLiteProvider {
 
     public String getUrlSite(String sitename){
         try {
-            getUrlSite.setString(1, sitename);
-            ResultSet resultSet = getUrlSite.executeQuery();
+            getUrlSiteStatement.setString(1, sitename);
+            ResultSet resultSet = getUrlSiteStatement.executeQuery();
             if (resultSet.next()){
                 return resultSet.getString("url");
             }
@@ -103,8 +112,6 @@ public class SQLiteProvider {
                         resultSet.getInt("id"),
                         resultSet.getString("login"),
                         resultSet.getString("password"),
-                        resultSet.getString("browser"),
-                        resultSet.getString("handler"),
                         resultSet.getLong("nexttime"),
                         resultSet.getInt("intervalminutes")
                 ));
@@ -259,5 +266,31 @@ public class SQLiteProvider {
             return true;
         }
         return false;
+    }
+
+    public String getHandler(String siteName) {
+        try {
+            getHandlerStatement.setString(1, siteName);
+            ResultSet resultSet = getHandlerStatement.executeQuery();
+            if (resultSet.next()){
+                return resultSet.getString("handler");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    public String getBrowser(String siteName) {
+        try {
+            getBrowserStatement.setString(1, siteName);
+            ResultSet resultSet = getBrowserStatement.executeQuery();
+            if (resultSet.next()){
+                return resultSet.getString("browser");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
     }
 }

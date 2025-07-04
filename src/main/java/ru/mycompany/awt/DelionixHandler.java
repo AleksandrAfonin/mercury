@@ -1,32 +1,40 @@
 package ru.mycompany.awt;
 
 import org.openqa.selenium.*;
-import org.openqa.selenium.interactions.Actions;
-
-import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 
 public class DelionixHandler implements Handler {
-    private final WebDriver WEB_DRIVER;
-    private final String E_MAIL;    // alsupp@yandex.ru
-    private final String PASSWORD;  // 19b650660b
-    private final Actions ACTIONS;
+    private final String sitename;
+    private final String browser;
+    private WebDriver WEB_DRIVER;
+    private User user;
+    private Processing processing;
     private final String URL;
 
-    public DelionixHandler(WebDriver webDriver, User user) {
+    public DelionixHandler() {
+        this.sitename = "delionix";
+        this.URL = SQLiteProvider.getInstance().getUrlSite(sitename);
+        this.browser = SQLiteProvider.getInstance().getBrowser(sitename);
+    }
+
+    @Override
+    public WebDriver getWebDriver() {
+        return WEB_DRIVER;
+    }
+
+    @Override
+    public void setProperty(WebDriver webDriver, Processing processing, User user) {
         this.WEB_DRIVER = webDriver;
-        this.E_MAIL = user.getLogin();
-        this.PASSWORD = user.getPassword();
-        this.ACTIONS = new Actions(webDriver, Duration.ofSeconds(1));
-        this.URL = "https://delionix.com/login";
+        this.processing = processing;
+        this.user = user;
     }
 
     @Override
     public void run() throws WebDriverException {
         System.out.println();
         Date date = new Date(System.currentTimeMillis());
-        System.out.println(date + "   Account: " + E_MAIL);
+        System.out.println(date + "   Account: " + user.getLogin());
 
         if (!start()) {
             WEB_DRIVER.quit();
@@ -118,7 +126,7 @@ public class DelionixHandler implements Handler {
         }
         System.out.println("Переход на 'Переходы'");
         try {
-            ACTIONS.click(webElement).perform();
+            processing.clickElement(webElement);
             pause(1000);
             String[] texts = new String[]{"Посещение сайтов"};
             int pageNum = checkPages(texts, 10);
@@ -132,7 +140,7 @@ public class DelionixHandler implements Handler {
             }
             for (WebElement element : dataElements) {
                 try {
-                    ACTIONS.click(element).perform();
+                    processing.clickElement(element);
                 } catch (StaleElementReferenceException e) {
                     pause(1000);
                     continue;
@@ -166,7 +174,7 @@ public class DelionixHandler implements Handler {
         }
         System.out.println("Переход на 'Серфинг сайтов'");
         try {
-            ACTIONS.click(webElement).perform();
+            processing.clickElement(webElement);
             pause(500);
             String[] texts = new String[]{"Серфинг сайтов"};
             int pageNum = checkPages(texts, 30);
@@ -187,13 +195,13 @@ public class DelionixHandler implements Handler {
                     continue;
                 }
                 WebElement clickLink = divLink.findElement(By.xpath("./a"));
-                ACTIONS.click(clickLink).perform();
+                processing.clickElement(clickLink);
                 pause(1000);
                 WebElement pristupit = getElementByXpathByElementWithCount(divLink, "./a[@class='start-yes-serf']", 5);
                 if (pristupit == null) {
                     continue;
                 }
-                ACTIONS.click(pristupit).perform();
+                processing.clickElement(pristupit);
                 pause(4000);
 
                 pause(60000);
@@ -235,7 +243,7 @@ public class DelionixHandler implements Handler {
         }
         System.out.println("Переход на 'YouTube'");
         try {
-            ACTIONS.click(webElement).perform();
+            processing.clickElement(webElement);
             pause(1000);
             String[] texts = new String[]{"Пройти проверку"};
             int pageNum = checkPages(texts, 30);
@@ -246,7 +254,7 @@ public class DelionixHandler implements Handler {
                 return false;
             }
             webElement = getElementByXpathWithCount("//*/button/span[@class='btn green']", 30);
-            ACTIONS.click(webElement).perform();
+            processing.clickElement(webElement);
             pause(4000);
             int count = checkPages(new String[]{"Просмотр видео", "На данный момент"}, 5);
             if (count != 0) {
@@ -264,7 +272,7 @@ public class DelionixHandler implements Handler {
 //        WebElement parent = element.findElement(By.xpath(".."));
 //        pause(500);
                 try {
-                    ACTIONS.click(element).perform();
+                    processing.clickElement(element);
                     pause(4000);
                 } catch (StaleElementReferenceException ignored) {
                 }
@@ -308,7 +316,7 @@ public class DelionixHandler implements Handler {
         javascriptExecutor.executeScript("arguments[0].setAttribute('wfd-id', 'id0');", webElement);
         pause(1000);
         webElement = getElementByXpathWithCount("//*/form/button", 5);
-        ACTIONS.click(webElement).perform();
+        processing.clickElement(webElement);
         pause(5000);
         return true;
     }
@@ -417,7 +425,7 @@ public class DelionixHandler implements Handler {
         for (int i = 0; i < 5; i++) {
             String content = webElements.get(i).getAttribute("style");
             if (sqLiteProvider.checkImageInDelionixTable(nameImage, content)) {
-                ACTIONS.click(webElements.get(i)).perform();
+                processing.clickElement(webElements.get(i));
                 isSuccess = true;
                 pause(500);
             }
@@ -440,7 +448,7 @@ public class DelionixHandler implements Handler {
         for (int i = 0; i < 5; i++) {
             String content = webElements.get(i).getAttribute("style");
             if (sqLiteProvider.checkImageInDelionixTable(nameImage, content)) {
-                ACTIONS.click(webElements.get(i)).perform();
+                processing.clickElement(webElements.get(i));
                 isSuccess = true;
                 pause(500);
             }
@@ -459,15 +467,15 @@ public class DelionixHandler implements Handler {
         if (webElement == null) {
             return false;
         }
-        ACTIONS.sendKeys(webElement, E_MAIL).perform();
+        processing.sendKeys(webElement, user.getLogin());
         webElement = getElementByXpathWithCount("//*/input[@name='password']", 30);
         if (webElement == null) {
             return false;
         }
-        ACTIONS.sendKeys(webElement, PASSWORD).perform();
+        processing.sendKeys(webElement, user.getPassword());
         if (resolveCaptcha()) {
             webElement = getElementByXpathWithCount("//*/span[@class='btn green']", 30);
-            ACTIONS.click(webElement).perform();
+            processing.clickElement(webElement);
             pause(5000);
             return true;
         }

@@ -15,17 +15,6 @@ public class ControlPoint {
     private final Map<String, Rectangle> rectanglesMap;
     private final java.util.List<BufferedImage> sprites;
 
-//    public ControlPoint(String siteName, String browser, String nameControlPoint, int widthSprite, int heightSprite , int rectangleFindX, int rectangleFindY, int widthRectangleFind, int heightRectangleFind){
-//        this.siteName = siteName;
-//        this.browser = browser;
-//        this.nameControlPoint = nameControlPoint;
-//        this.widthSprite = widthSprite;
-//        this.heightSprite = heightSprite;
-//        this.findRectangle = new Rectangle(rectangleFindX, rectangleFindY, widthRectangleFind, heightRectangleFind);
-//        this.rectanglesMap = new HashMap<>();
-//        this.sprites = SQLiteProvider.getInstance().getSprites(siteName, browser, nameControlPoint);
-//    }
-
     public ControlPoint(String siteName, String browser, String nameControlPoint, int widthSprite, int heightSprite, Rectangle findRectangle){
         this.siteName = siteName;
         this.browser = browser;
@@ -63,6 +52,10 @@ public class ControlPoint {
 
     public String getFullName(){
         return siteName + "_" + browser + "_" + nameControlPoint + "_" + widthSprite + "x" + heightSprite + ".png";
+    }
+
+    public String getName(){
+        return nameControlPoint;
     }
 
     public void addRectangleClick(String nameRectangle, Rectangle rectangleClick){

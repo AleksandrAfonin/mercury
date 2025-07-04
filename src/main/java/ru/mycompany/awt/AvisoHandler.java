@@ -1,32 +1,28 @@
 package ru.mycompany.awt;
 
 import org.openqa.selenium.*;
-import org.openqa.selenium.interactions.Actions;
-
-import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 
 public class AvisoHandler implements Handler {
-    private final WebDriver WEB_DRIVER;
-    private final String E_MAIL;    // alsupp@yandex.ru
-    private final String PASSWORD;  // 19b650660b
-    private final Actions ACTIONS;
+    private final String sitename;
+    private final String browser;
+    private WebDriver WEB_DRIVER;
+    private User user;
+    private Processing processing;
     private final String URL;
 
-    public AvisoHandler(WebDriver webDriver, User user) {
-        this.WEB_DRIVER = webDriver;
-        this.E_MAIL = user.getLogin();
-        this.PASSWORD = user.getPassword();
-        this.ACTIONS = new Actions(webDriver, Duration.ofSeconds(1));
-        this.URL = "https://aviso.bz/login";
+    public AvisoHandler() {
+        this.sitename = "aviso";
+        this.URL = SQLiteProvider.getInstance().getUrlSite(sitename);
+        this.browser = SQLiteProvider.getInstance().getBrowser(sitename);
     }
 
     @Override
     public void run() throws WebDriverException {
         System.out.println();
         Date date = new Date(System.currentTimeMillis());
-        System.out.println(date + "   Account: " + E_MAIL);
+        System.out.println(date + "   Account: " + user.getLogin());
 
         if (!start()) {
             WEB_DRIVER.quit();
@@ -64,6 +60,18 @@ public class AvisoHandler implements Handler {
 //============================
         pause(5000);
         WEB_DRIVER.quit();
+    }
+
+    @Override
+    public WebDriver getWebDriver() {
+        return WEB_DRIVER;
+    }
+
+    @Override
+    public void setProperty(WebDriver webDriver, Processing processing, User user) {
+        this.WEB_DRIVER = webDriver;
+        this.processing = processing;
+        this.user = user;
     }
 
     private boolean closeAllTabs() {
@@ -108,7 +116,7 @@ public class AvisoHandler implements Handler {
         }
         System.out.println("Переход на 'Серфинг'");
         try {
-            ACTIONS.click(webElement).perform();
+            processing.clickElement(webElement);
             pause(2000);
             String[] texts = new String[]{"Динамические ссылки."};
             int pageNum = checkPages(texts, 30);
@@ -126,7 +134,7 @@ public class AvisoHandler implements Handler {
                 }
                 WebElement parent = element.findElement(By.xpath(".."));
                 pause(500);
-                ACTIONS.click(element).perform();
+                processing.clickElement(element);
                 pause(4000);
                 try {
                     WebElement child = parent.findElement(By.tagName("a"));
@@ -134,7 +142,7 @@ public class AvisoHandler implements Handler {
                     if (!content.equals("Приступить к просмотру")) {
                         continue;
                     }
-                    ACTIONS.click(child).perform();
+                    processing.clickElement(child);
                     pause(2000);
                 } catch (Exception e) {
                     continue;
@@ -163,7 +171,7 @@ public class AvisoHandler implements Handler {
         }
         System.out.println("Переход на 'YouTube'");
         try {
-            ACTIONS.click(webElement).perform();
+            processing.clickElement(webElement);
             pause(2000);
             String[] texts = new String[]{"Выполнение Youtube"};
             int pageNum = checkPages(texts, 30);
@@ -182,11 +190,11 @@ public class AvisoHandler implements Handler {
                 WebElement parent = dataElementsLink.get(i).findElement(By.xpath(".."));
                 parent = parent.findElement(By.xpath(".."));
                 pause(500);
-                ACTIONS.click(dataElementsLink.get(i)).perform();
+                processing.clickElement(dataElementsLink.get(i));
                 pause(2000);
                 WebElement cont = getElementByXpathWithCount("//*[text()[contains(.,'Начать просмотр')]]", 5);
                 if (cont != null) {
-                    ACTIONS.click(cont).perform();
+                    processing.clickElement(cont);
                     pause(5000);
                 }
                 if (isMore1TabsWithCount(5)) {
@@ -199,7 +207,7 @@ public class AvisoHandler implements Handler {
                     continue;
                 }
                 try {
-                    ACTIONS.click(child).perform();
+                    processing.clickElement(child);
                     pause(4000);
                 } catch (JavascriptException ignored) {
                 }
@@ -220,7 +228,7 @@ public class AvisoHandler implements Handler {
         if (webElement == null) {
             return false;
         }
-        ACTIONS.click(webElement).perform();
+        processing.clickElement(webElement);
         pause(2000);
         return true;
     }
@@ -321,14 +329,14 @@ public class AvisoHandler implements Handler {
         if (webElement == null) {
             return false;
         }
-        ACTIONS.sendKeys(webElement, E_MAIL).perform();
+        processing.sendKeys(webElement, user.getLogin());
         webElement = getElementByXpathWithCount("//*/form/div/input[@name='password']", 30);
         if (webElement == null) {
             return false;
         }
-        ACTIONS.sendKeys(webElement, PASSWORD).perform();
+        processing.sendKeys(webElement, user.getPassword());
         webElement = getElementByXpathWithCount("//*/div[@class='button-box']/button[@id='button-login']/span", 30);
-        ACTIONS.click(webElement).perform();
+        processing.clickElement(webElement);
         pause(5000);
         return true;
     }

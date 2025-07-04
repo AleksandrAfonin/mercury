@@ -1,52 +1,51 @@
 package ru.mycompany.awt;
 
 import org.openqa.selenium.*;
-import org.openqa.selenium.interactions.Actions;
+
 import java.awt.*;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 
 public class SarSeoHandler implements Handler {
     private final String sitename;
     private String browser;
-    private final WebDriver WEB_DRIVER;
-    private final String E_MAIL;    // alsupp@yandex.ru
-    private final String PASSWORD;  // 19b650660b
-    private final Actions ACTIONS;
+    private WebDriver WEB_DRIVER;
+    private User user;
     private final String URL;
-
-    private final Processing processing;
-    private final Rectangle header;
+    private Processing processing;
 
     private final List<BufferedImage> ravno;
     private final List<BufferedImage> closeActivePage;
     private final List<BufferedImage> closePassivePage;
 
-    public SarSeoHandler(WebDriver webDriver, User user) throws AWTException {
+    public SarSeoHandler() throws AWTException {
         this.sitename = "sarseo";
-        this.WEB_DRIVER = webDriver;
-        this.ACTIONS = new Actions(webDriver, Duration.ofSeconds(1));
-        this.processing = new Processing(webDriver, ACTIONS);
-        this.E_MAIL = user.getLogin();
-        this.PASSWORD = user.getPassword();
-        this.header = new Rectangle(270, 2, 900, 30);
-        this.URL = "https://sarseo.su/login";
-
-        browser = processing.getBrowserName(webDriver);
+        this.URL = SQLiteProvider.getInstance().getUrlSite(sitename);
+        this.browser = SQLiteProvider.getInstance().getBrowser(sitename);
         this.ravno = SQLiteProvider.getInstance().getSprites(sitename, browser, "ravno");
         this.closeActivePage = SQLiteProvider.getInstance().getSprites(sitename, browser, "actclose");
         this.closePassivePage = SQLiteProvider.getInstance().getSprites(sitename, browser, "pasclose");
     }
 
     @Override
+    public WebDriver getWebDriver() {
+        return WEB_DRIVER;
+    }
+
+    @Override
+    public void setProperty(WebDriver webDriver, Processing processing, User user) {
+        this.WEB_DRIVER = webDriver;
+        this.processing = processing;
+        this.user = user;
+    }
+
+    @Override
     public void run() throws WebDriverException {
         System.out.println();
         Date date = new Date(System.currentTimeMillis());
-        System.out.println(date + "   Account: " + E_MAIL);
+        System.out.println(date + "   Account: " + user.getLogin());
 
         if (!start()) {
             WEB_DRIVER.quit();
@@ -161,7 +160,7 @@ public class SarSeoHandler implements Handler {
         }
         System.out.println("Переход на 'Серфинг сайтов'");
         try {
-            ACTIONS.click(webElement).perform();
+            processing.clickElement(webElement);
             pause(2000);
             WebElement checkPage = getElementByXpathWithCount("//*/td[@id='contentwrapper']/div[text()[contains(.,'Динамические ссылки')]]", 30);
             if (checkPage == null) {
@@ -178,7 +177,7 @@ public class SarSeoHandler implements Handler {
                 }
                 WebElement parent = element.findElement(By.xpath(".."));
                 pause(500);
-                ACTIONS.click(element).perform();
+                processing.clickElement(element);
                 pause(4000);
                 try {
                     WebElement child = parent.findElement(By.tagName("a"));
@@ -186,7 +185,7 @@ public class SarSeoHandler implements Handler {
                     if (!content.equals("Приступить к просмотру")) {
                         continue;
                     }
-                    ACTIONS.click(child).perform();
+                    processing.clickElement(child);
                     pause(4000);
                 } catch (Exception e) {
                     continue;
@@ -215,7 +214,7 @@ public class SarSeoHandler implements Handler {
         if (webElement == null) {
             return false;
         }
-        ACTIONS.click(webElement).perform();
+        processing.clickElement(webElement);
         pause(5000);
         return true;
     }
@@ -239,7 +238,7 @@ public class SarSeoHandler implements Handler {
         }
         System.out.println("Переход на 'Переходы'");
         try {
-            ACTIONS.click(webElement).perform();
+            processing.clickElement(webElement);
             pause(2000);
             WebElement checkPage = getElementByXpathWithCount("//*/td[@id='contentwrapper']/div[text()[contains(.,'Переходы')]]", 30);
             if (checkPage == null) {
@@ -254,7 +253,7 @@ public class SarSeoHandler implements Handler {
 //        if (element.getAttribute("target").equals("_blank")){
 //          continue;
 //        }
-                ACTIONS.click(element).perform();
+                processing.clickElement(element);
                 pause(4000);
                 if (isMore1TabsWithCount(5)) {
                     waitTime("Просмотр засчитан!", 200);
@@ -352,15 +351,15 @@ public class SarSeoHandler implements Handler {
         if (webElement == null) {
             return false;
         }
-        ACTIONS.sendKeys(webElement, E_MAIL).perform();
+        processing.sendKeys(webElement, user.getLogin());
         webElement = getElementByXpathWithCount("//*/table[@class='table']/tbody/tr[2]/td[2]/input[@name='password']", 15);
         if (webElement == null) {
             return false;
         }
-        ACTIONS.sendKeys(webElement, PASSWORD).perform();
+        processing.sendKeys(webElement, user.getPassword());
         if (resolveCaptcha()) {
             webElement = getElementByXpathWithCount("//*/span[@class='btn green']", 15);
-            ACTIONS.click(webElement).perform();
+            processing.clickElement(webElement);
             pause(5000);
             return true;
         }
@@ -378,7 +377,7 @@ public class SarSeoHandler implements Handler {
         if (webElement == null) {
             return false;
         }
-        ACTIONS.sendKeys(webElement, processing.resolveSarSeoCaptcha(point)).perform();
+        processing.sendKeys(webElement, processing.resolveSarSeoCaptcha(point));
         return true;
     }
 

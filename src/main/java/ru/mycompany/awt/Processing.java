@@ -26,8 +26,8 @@ public class Processing {
     private final Robot robot;
     private final Rectangle fullScreen;
     private final Tesseract tesseract;
-    private final WebDriver WEB_DRIVER;
-    private final Actions ACTIONS;
+    private WebDriver WEB_DRIVER;
+    private Actions ACTIONS;
 
     public Rectangle getFullScreen() {
         return fullScreen;
@@ -37,12 +37,16 @@ public class Processing {
         this.screen = screen;
     }
 
-    public Processing(WebDriver webDriver, Actions actions) throws AWTException {
+        public Processing() throws AWTException {
         GraphicsDevice[] graphicsDevices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
         this.robot = new Robot(graphicsDevices[0]);
         this.fullScreen = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
         this.tesseract = new Tesseract();
         this.tesseract.setDatapath("./tessdata");
+
+    }
+
+    public void setProperty(WebDriver webDriver, Actions actions){
         this.WEB_DRIVER = webDriver;
         this.ACTIONS = actions;
     }
@@ -211,6 +215,13 @@ public class Processing {
         return false;
     }
 
+    public void clickElement(WebElement webElement){
+        ACTIONS.click(webElement).perform();
+    }
+
+    public void sendKeys(WebElement webElement, String text){
+        ACTIONS.sendKeys(webElement, text).perform();
+    }
 
     public Point find(List<BufferedImage> images, boolean isRefresh, int count) {
         for (int i = 0; i < count; i++) {
@@ -254,25 +265,6 @@ public class Processing {
 
     public Point find(ControlPoint controlPoint, boolean isRefresh, int count) {
         return find(controlPoint.getImages(), controlPoint.getFindRectangle(), isRefresh, count);
-
-//    for (int i = 0; i < count; i++) {
-//      if (count > 1){
-//        robot.delay(2000);
-//      }
-//      if (isRefresh){
-//        refreshScreen();
-//      }
-//      if (screen == null){
-//        return null;
-//      }
-//      for (BufferedImage image : controlPoint.getImages()) {
-//        Point point = findImage(image, screen);
-//        if (point != null) {
-//          return point;
-//        }
-//      }
-//    }
-//    return null;
     }
 
     public Point find(List<BufferedImage> images, Rectangle rectangle, boolean isRefresh, int count) {
@@ -441,5 +433,25 @@ public class Processing {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public int findOneControlPointFromList(List<ControlPoint> controlPoints, int count){
+        Point point;
+        for (int i = 0; i <= count; i++) {
+            robot.delay(2000);
+            int number = 0;
+            for (ControlPoint cp : controlPoints){
+                point = findNotCount(cp, true);
+                if (point != null) {
+                    System.out.println(cp.getName() + " Ok");
+                    return number; // Нашли
+                } else if (i == count) {
+                    saveScreenShot(cp.getFullName());
+                    System.out.println(cp.getName() + " control point is not found");
+                }
+                number ++;
+            }
+        }
+        return -1; // Ничего не нашли
     }
 }

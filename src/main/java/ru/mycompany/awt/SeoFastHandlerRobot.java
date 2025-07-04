@@ -3,21 +3,17 @@ package ru.mycompany.awt;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.interactions.Actions;
 
 import java.awt.*;
-import java.time.Duration;
 import java.util.Date;
 
 public class SeoFastHandlerRobot implements Handler {
     private final String sitename;
     private final String browser;
-    private final WebDriver WEB_DRIVER;
-    private String E_MAIL;    // alsupp@yandex.ru
-    private String PASSWORD;  // 19b650660b
-    private final Actions ACTIONS;
+    private WebDriver WEB_DRIVER;
+    private User user;
+    private Processing processing;
     private final String URL;
-    private final Processing processing;
     private final Rectangle header;
 
     private final ControlPoint enterControlPoint;
@@ -34,16 +30,11 @@ public class SeoFastHandlerRobot implements Handler {
     private final ControlPoint completedControlPoint;
     private final ControlPoint confirmCompletedControlPoint;
 
-    public SeoFastHandlerRobot(WebDriver webDriver, User user) throws AWTException {
+    public SeoFastHandlerRobot() throws AWTException {
         this.sitename = "seofast";
-        this.WEB_DRIVER = webDriver;
-        this.ACTIONS = new Actions(webDriver, Duration.ofSeconds(1));
-        this.processing = new Processing(webDriver, ACTIONS);
-        this.E_MAIL = user.getLogin();
-        this.PASSWORD = user.getPassword();
         this.header = new Rectangle(390, 15, 80, 13);
         this.URL = SQLiteProvider.getInstance().getUrlSite(sitename);
-        browser = processing.getBrowserName(webDriver);
+        this.browser = SQLiteProvider.getInstance().getBrowser(sitename);
 
         // Контрольна точка входа в акаунт
         this.enterControlPoint = new ControlPoint(sitename, browser, "enter", 15, 17, new Rectangle(520, 280, 280, 120));
@@ -81,16 +72,23 @@ public class SeoFastHandlerRobot implements Handler {
 
     }
 
-    public void setUser(User user){
-        this.E_MAIL = user.getLogin();
-        this.PASSWORD = user.getPassword();
+    @Override
+    public WebDriver getWebDriver() {
+        return WEB_DRIVER;
+    }
+
+    @Override
+    public void setProperty(WebDriver webDriver, Processing processing, User user) {
+        this.WEB_DRIVER = webDriver;
+        this.processing = processing;
+        this.user = user;
     }
 
     @Override
     public void run() throws WebDriverException {
         System.out.println();
         Date date = new Date(System.currentTimeMillis());
-        System.out.println(date + "   Account: " + E_MAIL);
+        System.out.println(date + "   Account: " + user.getLogin());
 
         if (!start()) {
             WEB_DRIVER.quit();
@@ -116,7 +114,7 @@ public class SeoFastHandlerRobot implements Handler {
         WEB_DRIVER.quit();
     }
 
-    private Rectangle goVisitsPage(){
+    private Rectangle goVisitsPage() {
         Point point = processing.find(earnControlPoint, true, 10);
         if (point == null) {
             processing.saveScreenShot(earnControlPoint.getFullName());
@@ -154,7 +152,7 @@ public class SeoFastHandlerRobot implements Handler {
     }
 
     private boolean performingClicksOnLinks(Rectangle startField) {
-        if (startField == null){
+        if (startField == null) {
             return false;
         }
         Rectangle findField = new Rectangle(startField);
@@ -192,19 +190,20 @@ public class SeoFastHandlerRobot implements Handler {
                 area.y = pointRL.y - 12;
                 visitControlPoint.setFindRectangle(area);
                 filedControlPoint.setFindRectangle(area);
+
                 int result = verifyGo(60);
                 if (result == 0) {
                     return false;
                 }
                 if (result == 1 || result == 2) {
                     Point point = processing.find(completedControlPoint, true, 8);
-                    if (point == null){
+                    if (point == null) {
                         processing.mouseRandomMove(header);
                         point = processing.find(completedControlPoint, true, 90);
                         if (point == null) {
                             processing.saveScreenShot(completedControlPoint.getFullName());
                             System.out.println("completed control point is not found");
-                        }else{
+                        } else {
                             System.out.println("completed control point is Ok");
                         }
                     }
@@ -220,7 +219,7 @@ public class SeoFastHandlerRobot implements Handler {
                     if (point == null) {
                         processing.saveScreenShot(confirmCompletedControlPoint.getFullName());
                         System.out.println("confirmCompleted control point is not found");
-                    }else{
+                    } else {
                         System.out.println("confirmCompleted control point is Ok");
                     }
                 }
@@ -273,11 +272,11 @@ public class SeoFastHandlerRobot implements Handler {
         }
         Rectangle eMailRectangle = enterControlPoint.getRectangleClick("e-mail");
         processing.mouseLeftClick(point, eMailRectangle);
-        processing.sendKey(E_MAIL);
+        processing.sendKey(user.getLogin());
         pause(700, 100);
         Rectangle passwordRectangle = enterControlPoint.getRectangleClick("password");
         processing.mouseLeftClick(point, passwordRectangle);
-        processing.sendKey(PASSWORD);
+        processing.sendKey(user.getPassword());
         pause(700, 100);
         Rectangle enterRectangle = enterControlPoint.getRectangleClick("_");
         processing.mouseLeftClick(point, enterRectangle);
